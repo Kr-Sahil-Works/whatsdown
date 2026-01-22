@@ -1,13 +1,12 @@
-import { defineSchema, defineTable } from 'convex/server'
-import { v  } from 'convex/values'
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
 
-export default defineSchema ({
-    tasks: defineTable({
-        text:v.string(),
-        completed:v.boolean(),
-    }),
-    products:defineTable({
-        name:v.string(),
-        price:v.number(),
-    })
-})
+export default defineSchema({
+ users: defineTable({
+  tokenIdentifier: v.string(),
+  email: v.string(),
+  name: v.string(),
+  image: v.string(),
+  lastSeen: v.number(),
+}).index("by_tokenIdentifier", ["tokenIdentifier"]),
+});
