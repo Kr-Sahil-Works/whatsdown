@@ -1,32 +1,24 @@
 import { ConvexError, v } from "convex/values";
 import { internalMutation, query } from "./_generated/server";
 
-const OFFLINE_AFTER = 40_000; // 40 seconds
-
-// ─────────────────────────────────────────────
-// CREATE USER
-// ─────────────────────────────────────────────
 export const createUser = internalMutation({
-  args: {
-    tokenIdentifier: v.string(),
-    email: v.string(),
-    name: v.string(),
-    image: v.string(),
-  },
-  handler: async (ctx, args) => {
-    await ctx.db.insert("users", {
-      tokenIdentifier: args.tokenIdentifier,
-      email: args.email,
-      name: args.name,
-      image: args.image,
-      lastSeen: Date.now(), // ✅ ONLY SOURCE OF TRUTH
-    });
-  },
+	args: {
+		tokenIdentifier: v.string(),
+		email: v.string(),
+		name: v.string(),
+		image: v.string(),
+	},
+	handler: async (ctx, args) => {
+		await ctx.db.insert("users", {
+			tokenIdentifier: args.tokenIdentifier,
+			email: args.email,
+			name: args.name,
+			image: args.image,
+			isOnline: true,
+		});
+	},
 });
 
-// ─────────────────────────────────────────────
-// UPDATE USER
-// ─────────────────────────────────────────────
 export const updateUser = internalMutation({
   args: {
     tokenIdentifier: v.string(),
@@ -41,7 +33,7 @@ export const updateUser = internalMutation({
       )
       .unique();
 
-    if (!user) throw new ConvexError("User not found");
+    if (!user) return; // don't crash webhooks
 
     await ctx.db.patch(user._id, {
       image: args.image,
@@ -50,55 +42,57 @@ export const updateUser = internalMutation({
   },
 });
 
-// ─────────────────────────────────────────────
-// HEARTBEAT (CALL EVERY 30s FROM CLIENT)
-// ─────────────────────────────────────────────
-export const heartbeat = internalMutation({
-  args: { tokenIdentifier: v.string() },
-  async handler(ctx, args) {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", q =>
-        q.eq("tokenIdentifier", args.tokenIdentifier)
-      )
-      .unique();
 
-    if (!user) return;
+export const setUserOnline = internalMutation({
+	args: { tokenIdentifier: v.string() },
+	handler: async (ctx, args) => {
+		const user = await ctx.db
+			.query("users")
+			.withIndex("by_tokenIdentifier", (q) => q.eq("tokenIdentifier", args.tokenIdentifier))
+			.unique();
 
-    await ctx.db.patch(user._id, {
-      lastSeen: Date.now(),
-    });
-  },
+		if (!user) {
+			return
+		}
+
+		await ctx.db.patch(user._id, { isOnline: true });
+	},
 });
 
-// ─────────────────────────────────────────────
-// GET USERS (COMPUTE isOnline)
-// ─────────────────────────────────────────────
+export const setUserOffline = internalMutation({
+	args: { tokenIdentifier: v.string() },
+	handler: async (ctx, args) => {
+		const user = await ctx.db
+			.query("users")
+			.withIndex("by_tokenIdentifier", (q) => q.eq("tokenIdentifier", args.tokenIdentifier))
+			.unique();
+
+		if (!user) {
+			return
+		}
+
+		await ctx.db.patch(user._id, { isOnline: false });
+	},
+});
+
 export const getUsers = query({
-  args: {},
-  handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new ConvexError("Unauthorized");
+	args: {},
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			return [];
+		}
 
-    const users = await ctx.db.query("users").collect();
-
-    return users
-      .filter(u => u.tokenIdentifier !== identity.tokenIdentifier)
-      .map(u => ({
-        ...u,
-        isOnline: Date.now() - u.lastSeen < OFFLINE_AFTER,
-      }));
-  },
+		const users = await ctx.db.query("users").collect();
+		return users.filter((user) => user.tokenIdentifier !== identity.tokenIdentifier);
+	},
 });
 
-// ─────────────────────────────────────────────
-// GET ME (COMPUTE isOnline)
-// ─────────────────────────────────────────────
 export const getMe = query({
   args: {},
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new ConvexError("Unauthorized");
+    if (!identity) return null;
 
     const user = await ctx.db
       .query("users")
@@ -107,11 +101,31 @@ export const getMe = query({
       )
       .unique();
 
-    if (!user) throw new ConvexError("User not found");
-
-    return {
-      ...user,
-      isOnline: Date.now() - user.lastSeen < OFFLINE_AFTER,
-    };
+    return user ?? null;
   },
+});
+
+
+export const getGroupMembers = query({
+	args: { conversationId: v.id("conversations") },
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+
+		if (!identity) {
+			throw new ConvexError("Unauthorized");
+		}
+
+		const conversation = await ctx.db
+			.query("conversations")
+			.filter((q) => q.eq(q.field("_id"), args.conversationId))
+			.first();
+		if (!conversation) {
+			throw new ConvexError("Conversation not found");
+		}
+
+		const users = await ctx.db.query("users").collect();
+		const groupMembers = users.filter((user) => conversation.participants.includes(user._id));
+
+		return groupMembers;
+	},
 });
