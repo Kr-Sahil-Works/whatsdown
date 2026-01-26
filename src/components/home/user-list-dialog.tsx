@@ -97,7 +97,15 @@ const UserListDialog = () => {
 			<DialogTrigger>
 				<MessageSquareDiff size={20} />
 			</DialogTrigger>
-			<DialogContent>
+			<DialogContent
+  className="
+    bg-background/50
+    backdrop-blur-xl
+    border border-white/10
+    shadow-2xl
+  "
+>
+
 				<DialogHeader>
 					<DialogClose ref = {dialogCloseRef} />
 					<DialogTitle>USERS</DialogTitle>
