@@ -21,7 +21,7 @@ const ChatPlaceHolder = () => {
 				shadow-xl px-6 md:px-8 py-8 md:py-10 text-center'
 			>
 				<Image
-					src='/desktop-hh.png'
+					src='/header2.png'
 					alt='Hero'
 					width={320}
 					height={188}
@@ -30,7 +30,7 @@ const ChatPlaceHolder = () => {
 				/>
 
 				<h2 className='text-xl md:text-3xl font-light text-gray-900 dark:text-gray-100'>
-				 WhatsApp for geeks with openai features
+				 WhatsApp for everyone with openai features
 				</h2>
 
 				<p className='mt-2 md:mt-3 text-xs md:text-base text-gray-600 dark:text-gray-400'>
