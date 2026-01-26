@@ -105,7 +105,6 @@ export const getMe = query({
   },
 });
 
-
 export const getGroupMembers = query({
 	args: { conversationId: v.id("conversations") },
 	handler: async (ctx, args) => {
@@ -129,3 +128,4 @@ export const getGroupMembers = query({
 		return groupMembers;
 	},
 });
+

@@ -1,6 +1,4 @@
 "use client";
-
-import { users } from "@/dummy-data/db";
 import {
   Dialog,
   DialogContent,
@@ -11,8 +9,17 @@ import {
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Crown } from "lucide-react";
+import { Conversation } from "@/store/chat-store";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
-const GroupMembersDialog = () => {
+type GroupMembersDialogProps = {
+  selectedConversation:Conversation;
+}
+
+
+const GroupMembersDialog = ({selectedConversation}: GroupMembersDialogProps) => {
+  const users = useQuery(api.users.getGroupMembers, {conversationId: selectedConversation._id});
   return (
     <Dialog>
       {/* FIX 1: p → div via asChild (no style change) */}
@@ -22,9 +29,18 @@ const GroupMembersDialog = () => {
         </div>
       </DialogTrigger>
 
-      <DialogContent className="bg-[#87aa0a] dark:bg-[#8caa2071]">
+      <DialogContent
+  className="
+    bg-white/20 dark:bg-black/30
+    backdrop-blur-xl
+    border border-white/20 dark:border-white/10
+    shadow-2xl
+    text-foreground
+  "
+>
+
         <DialogHeader>
-          <DialogTitle className="my-2">Current Members</DialogTitle>
+          <DialogTitle className="my-2 text-white drop-shadow">Current Members</DialogTitle>
 
           {/* FIX 2: DialogDescription renders <p> */}
           <DialogDescription asChild>
@@ -32,7 +48,13 @@ const GroupMembersDialog = () => {
               {users?.map((user) => (
                 <div
                   key={user._id}
-                  className="flex gap-3 items-center p-2 rounded"
+                  className="
+  flex gap-3 items-center p-2 rounded-lg
+  bg-white/10 dark:bg-black/20
+  backdrop-blur-md
+  border border-white/10
+"
+
                 >
                   <Avatar className="relative overflow-visible">
                     {/* FIX 3: div → span */}
@@ -55,7 +77,7 @@ const GroupMembersDialog = () => {
                       <h3 className="text-md font-medium">
                         {user.name || user.email.split("@")[0]}
                       </h3>
-                      {user.admin && (
+                      {user._id === selectedConversation.admin && (
                         <Crown size={16} className="text-yellow-400" />
                       )}
                     </div>
