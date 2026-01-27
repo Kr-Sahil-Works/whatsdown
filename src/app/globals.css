@@ -1,6 +1,25 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@layer utilities {
+	.dot-typing {
+		width: 4px;
+		height: 4px;
+		border-radius: 50%;
+		background: white;
+		animation: dotTyping 1.4s infinite linear;
+	}
+
+	@keyframes dotTyping {
+		0% { box-shadow: 0 0 0 0 white; }
+		33% { box-shadow: 8px 0 0 0 white; }
+		66% { box-shadow: 8px 0 0 0 white, 16px 0 0 0 white; }
+		100% { box-shadow: 0 0 0 0 white; }
+	}
+}
+
+
+
 @custom-variant dark (&:is(.dark *));
 
 /* ================= THEME MAP ================= */

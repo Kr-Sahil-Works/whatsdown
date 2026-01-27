@@ -9,6 +9,7 @@ import { useConversationStore } from "@/store/chat-store";
 import toast from "react-hot-toast";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import EmojiPicker, {Theme} from "emoji-picker-react";
+import MediaDropdown from "./media-dropdown";
 
 const IconBtn = ({
 	children,
@@ -34,17 +35,7 @@ const IconBtn = ({
 		{children}
 	</button>
 );
-// const FastSpinner = () => (
-// 	<span
-// 		className="
-// 			h-4 w-4 rounded-full
-// 			border-[2.5px] border-gray-400
-// 			border-t-transparent
-// 			animate-[spin_0.35s_linear_infinite,scale_0.6s_ease-in-out_infinite]
 
-// 		"
-// 	/>
-// );
 const FastSpinner = () => (
 	<span
 		className="
@@ -134,7 +125,7 @@ const MessageInput = () => {
 	</div>
 
 	<IconBtn>
-		<Plus className="h-5 w-5" />
+		<MediaDropdown/>
 	</IconBtn>
 </div>
 

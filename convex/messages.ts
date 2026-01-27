@@ -87,11 +87,7 @@ export const sendTextMessage = mutation({
             return messagesWithSender;
         }
     })
-
-
-
-
-    //  --------- # Unoptimized Version Of Function
+// Unoptimized getMessages (old version)
 // export const getMessages = query({
 //     args:{
 //         conversation: v.id("conversations"),
@@ -107,7 +103,6 @@ export const sendTextMessage = mutation({
 //         .withIndex("by_conversation", q=> q.eq("conversation", args.conversation))
 //         .collect();
 
-
 //         const messagesWithSender = await Promise.all(
 //             messages.map(async (message) => {
 //                 const sender = await ctx.db
@@ -115,10 +110,48 @@ export const sendTextMessage = mutation({
 //                 .filter(q => q.eq(q.field("_id"), message.sender))
 //                 .first();
 
-//                 return{...message,sender}
+//                 return { ...message, sender };
 //             })
-//         ) 
+//         );
 
 //         return messagesWithSender;
 //     }
-// })
+// });
+
+export const sendImage = mutation({
+	args: { imgId: v.id("_storage"), sender: v.id("users"), conversation: v.id("conversations") },
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			throw new ConvexError("Unauthorized");
+		}
+
+		const content = (await ctx.storage.getUrl(args.imgId)) as string;
+
+		await ctx.db.insert("messages", {
+			content: content,
+			sender: args.sender,
+			messageType: "image",
+			conversation: args.conversation,
+		});
+	},
+});
+
+export const sendVideo = mutation({
+	args: { videoId: v.id("_storage"), sender: v.id("users"), conversation: v.id("conversations") },
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			throw new ConvexError("Unauthorized");
+		}
+
+		const content = (await ctx.storage.getUrl(args.videoId)) as string;
+
+		await ctx.db.insert("messages", {
+			content: content,
+			sender: args.sender,
+			messageType: "video",
+			conversation: args.conversation,
+		});
+	},
+});
