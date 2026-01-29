@@ -66,7 +66,7 @@ const ChatAvatarActions = ({me,message}:ChatAvatarActionsProps) => {
   className="text-[10px] flex gap-2 justify-between font-bold cursor-pointer group"
   onClick={handleCreateConversation}
   >
-    {message.sender.name}
+    {isGroup && message.sender.name}
 
     {!isMember && !fromAI && isGroup && (
   <div className="relative group flex items-center">
