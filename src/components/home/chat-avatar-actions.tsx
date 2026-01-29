@@ -19,8 +19,11 @@ const ChatAvatarActions = ({me,message}:ChatAvatarActionsProps) => {
   const isMember = selectedConversation?.participants.includes(message.sender._id);
   const KickUser = useMutation(api.conversations.kickUser);
   const createConversation = useMutation(api.conversations.createConversation);
+  const fromAI = message.sender?.name === "ChatGPT";
+  const isGroup = selectedConversation?.isGroup;
 
   const handleKickUser = async (e:React.MouseEvent) => {
+    if(fromAI) return;
     e.stopPropagation();
     if(!selectedConversation) return;
         try {
@@ -39,6 +42,7 @@ const ChatAvatarActions = ({me,message}:ChatAvatarActionsProps) => {
   }
 
   const handleCreateConversation = async () => {
+     if(fromAI) return;
       try {
        const conversationId =  await createConversation({
           isGroup:false,
@@ -64,7 +68,7 @@ const ChatAvatarActions = ({me,message}:ChatAvatarActionsProps) => {
   >
     {message.sender.name}
 
-    {!isMember && (
+    {!isMember && !fromAI && isGroup && (
   <div className="relative group flex items-center">
     {/* Bold banned mark */}
    <div
@@ -87,7 +91,7 @@ const ChatAvatarActions = ({me,message}:ChatAvatarActionsProps) => {
   </div>
 )}
 
-    {isMember && selectedConversation?.admin === me._id && (
+    {isMember && isGroup &&  selectedConversation?.admin === me._id && (
   <KickUserDialog onConfirm={handleKickUser} />
 )}
 

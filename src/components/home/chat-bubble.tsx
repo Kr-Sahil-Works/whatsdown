@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import MediaDialog from "../home/MediaDialog";
 import ChatAvatarActions from "./chat-avatar-actions";
+import { Bot } from "lucide-react";
 
 
 type ChatBubbleProps = {
@@ -296,12 +297,13 @@ const ChatBubble = ({ me, message, previousMessage,allImages }: ChatBubbleProps)
 
 	const { selectedConversation } = useConversationStore();
 	const isMember =
-		selectedConversation?.participants.includes(message.sender._id) || false;
+		selectedConversation?.participants.includes(message.sender?._id) || false;
 	const isGroup = selectedConversation?.isGroup;
-	const fromMe = message.sender._id === me?._id;
+	const fromMe = message.sender?._id === me?._id;
+	const fromAI = message.sender?.name === "ChatGPT";
 	const bgClass = fromMe
-		? "bg-green-chat"
-		: "bg-white dark:bg-gray-primary";
+		? "bg-green-chat":
+		!fromAI ?"bg-white dark:bg-gray-primary" : "bg-bule-500 text-white"  ;
 
 	const [open,setOpen] = useState(false);
 	const [Uploadingbar, setUploadingbar] = useState(false);
@@ -317,7 +319,7 @@ const ChatBubble = ({ me, message, previousMessage,allImages }: ChatBubbleProps)
 						isGroup={isGroup}
 						isMember={isMember}
 						message={message}
-						fromAI={false}
+						fromAI={fromAI}
 					/>
 
 					{message.messageType === "image" ? (
@@ -332,8 +334,9 @@ const ChatBubble = ({ me, message, previousMessage,allImages }: ChatBubbleProps)
 
 				<div
 					className={`flex flex-col z-20 max-w-fit px-2 pt-1 rounded-md shadow-md relative ${bgClass}`}>
-							<OtherMessageIndicator />
-							{isGroup && <ChatAvatarActions
+							{!fromAI && <OtherMessageIndicator />}
+							{fromAI && <Bot size={16} className="absolute bottom-0.5 left-2"/>}
+							{<ChatAvatarActions
 							 message={message}
 							 me={me}
 							/> }
