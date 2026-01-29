@@ -1,0 +1,151 @@
+/* ===============================
+   CHAT APPEAR ONCE (NO LOOP)
+================================ */
+@keyframes chatAppearLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-28px) translateY(6px) scale(0.94);
+    filter: blur(6px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateX(-4px) translateY(0) scale(1.01);
+    filter: blur(1px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes chatAppearRight {
+  0% {
+    opacity: 0;
+    transform: translateX(28px) translateY(6px) scale(0.94);
+    filter: blur(6px);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateX(4px) translateY(0) scale(1.01);
+    filter: blur(1px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* ===============================
+   APPLY (RUN ONCE)
+================================ */
+
+.animate-chat-left,
+.animate-chat-right {
+  opacity: 0;
+  animation-duration: 0.65s;
+  animation-timing-function: cubic-bezier(.22,1,.36,1); /* smooth pop */
+  animation-fill-mode: forwards;
+  will-change: transform, opacity, filter;
+}
+
+.animate-chat-left {
+  animation-name: chatAppearLeft;
+}
+
+.animate-chat-right {
+  animation-name: chatAppearRight;
+}
+
+
+/* ===============================
+   SEQUENTIAL DELAYS (1 → 5)
+================================ */
+
+.msg-1 { animation-delay: 0s; }
+.msg-2 { animation-delay: 0.8s; }
+.msg-3 { animation-delay: 1.8s; }
+.msg-4 { animation-delay: 2.6s; }
+.msg-5 { animation-delay: 3.6s; }
+
+
+/* ===============================
+   TYPING DOTS
+================================ */
+
+@keyframes typing {
+  0%   { opacity: .2; transform: translateY(0); }
+  20%  { opacity: 1;  transform: translateY(-2px); }
+  100% { opacity: .2; transform: translateY(0); }
+}
+
+.typing-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #9ca3af;
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* ===============================
+   EXPLORE BUTTON (UNCHANGED)
+================================ */
+
+.explore-btn {
+  position: relative;
+  padding: 10px 28px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow:
+    0 10px 30px rgba(34, 197, 94, 0.35),
+    inset 0 0 0 1px rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: explore-float 4s ease-in-out infinite;
+}
+
+.explore-btn::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #22c55e, #4ade80, #22c55e);
+  opacity: 0.6;
+  filter: blur(10px);
+  z-index: -1;
+}
+
+.explore-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow:
+    0 14px 40px rgba(34, 197, 94, 0.45);
+}
+
+@keyframes explore-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+
+@media (max-width: 640px) {
+  :root {
+    --loop: 12s;
+  }
+
+  .animate-chat-left,
+  .animate-chat-right {
+    transform-origin: center;
+  }
+}

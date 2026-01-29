@@ -7,13 +7,31 @@ import { UserButton } from "@clerk/nextjs";
 import UserListDialog from "./user-list-dialog";
 import { useConvexAuth,  useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import { useEffect } from "react";
+import { useConversationStore } from "@/store/chat-store";
+import { LeftSidebarSkeleton } from "../home/chat-skeleton";
 
 
 const LeftPanel = () => {
-	const {isAuthenticated} = useConvexAuth();
+	const {isAuthenticated,isLoading} = useConvexAuth();
 	const conversations = useQuery(api.conversations.getMyConversations,isAuthenticated ? undefined : "skip");
-	console.log(conversations);
 	
+	const {
+  selectedConversation,
+  setSelectedConversation,
+  isChatListOpen,
+} = useConversationStore();
+
+
+	useEffect(()=>{
+		const conversationIds = conversations?.map((conversation) => conversation._id);
+		if(selectedConversation && conversationIds && !conversationIds.includes(selectedConversation._id)){
+			setSelectedConversation(null);
+		}
+	},[conversations])
+
+	if (isLoading) return <LeftSidebarSkeleton />;
+	if (!isChatListOpen) return null;
 
 	return (
 		<div className='w-1/4 border-gray-600 border-r'>

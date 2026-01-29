@@ -6,11 +6,16 @@ import MessageContainer from "./message-container";
 import ChatPlaceHolder from "@/components/home/chat-placeholder";
 import GroupMembersDialog from "./group-members-dialog";
 import { useConversationStore } from "@/store/chat-store";
+import { ArrowLeft } from "lucide-react";
+import { useConvexAuth } from "convex/react";
+import { RightChatSkeleton } from "../home/chat-skeleton";
 
 const RightPanel = () => {
   const{ selectedConversation, setSelectedConversation} = useConversationStore();
+  const {isLoading} = useConvexAuth();
+  
+  if (isLoading) return <RightChatSkeleton />;
   if (!selectedConversation) return <ChatPlaceHolder />;
-
   const conversationName = selectedConversation.groupName || selectedConversation.name;
   const conversationImage = selectedConversation.groupImage || selectedConversation.image;
  
@@ -20,8 +25,15 @@ const RightPanel = () => {
       <div className="w-full sticky top-0 z-50">
         {/* Header */}
         <div className="flex justify-between bg-gray-primary p-3">
-          <div className="flex gap-3 items-center">
-            <Avatar>
+         <div className="flex gap-2 items-center">
+  {/* BACK BUTTON (WhatsApp style) */}
+  <ArrowLeft
+    size={20}
+    className="cursor-pointer text-gray-400 hover:text-white"
+    onClick={() => setSelectedConversation(null)}
+  />
+
+  <Avatar>
               <AvatarImage src={conversationImage || "/placeholder.png"} className="object-cover" />
               <AvatarFallback>
                 <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
@@ -54,3 +66,4 @@ const RightPanel = () => {
 };
 
 export default RightPanel;
+ 

@@ -5,6 +5,7 @@ import DateIndicator from "./date-indicator";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import MediaDialog from "../home/MediaDialog";
+import ChatAvatarActions from "./chat-avatar-actions";
 
 
 type ChatBubbleProps = {
@@ -332,6 +333,10 @@ const ChatBubble = ({ me, message, previousMessage,allImages }: ChatBubbleProps)
 				<div
 					className={`flex flex-col z-20 max-w-fit px-2 pt-1 rounded-md shadow-md relative ${bgClass}`}>
 							<OtherMessageIndicator />
+							{isGroup && <ChatAvatarActions
+							 message={message}
+							 me={me}
+							/> }
 							<TextMessage message={message} />
 							<MessageTime time={time} fromMe={fromMe} />
 						</div>

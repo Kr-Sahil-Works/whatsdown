@@ -37,7 +37,11 @@ const UserListDialog = () => {
 
 	const me = useQuery(api.users.getMe);
 	const users = useQuery(api.users.getUsers) ?? [];
-	const {setSelectedConversation} = useConversationStore();
+	const {
+  setSelectedConversation,
+  isUserListOpen,
+  setUserListOpen,
+} = useConversationStore();
 
 	const handleCreateConversation = async () => {
 		if (selectedUsers.length === 0 ) return;
@@ -71,7 +75,7 @@ const UserListDialog = () => {
 				})
 			}
 			
-			dialogCloseRef.current?.click();
+			setUserListOpen(false);
 			setSelectedUsers([]);
 			setGroupName("");
 			setSelectedImage(null);
@@ -103,10 +107,7 @@ const UserListDialog = () => {
 
 
 	return (
-		<Dialog>
-			<DialogTrigger>
-				<MessageSquareDiff size={20} />
-			</DialogTrigger>
+		<Dialog open={isUserListOpen} onOpenChange={setUserListOpen}>
 			<DialogContent
   className="
     bg-background/50
@@ -117,7 +118,11 @@ const UserListDialog = () => {
 >
 
 				<DialogHeader>
-					<DialogClose ref = {dialogCloseRef} />
+					<DialogClose
+  ref={dialogCloseRef}
+  onClick={() => setUserListOpen(false)}
+/>
+
 					<DialogTitle>USERS</DialogTitle>
 				</DialogHeader>
 
@@ -182,7 +187,13 @@ const UserListDialog = () => {
 					))}
 				</div>
 				<div className='flex justify-between'>
-					<Button variant={"outline"}>Cancel</Button>
+					<Button
+  variant={"outline"}
+  onClick={() => setUserListOpen(false)}
+>
+  Cancel
+</Button>
+
 					<Button
 					onClick={handleCreateConversation}
 						disabled={selectedUsers.length === 0 || (selectedUsers.length > 1 && !groupName) || isLoading}
