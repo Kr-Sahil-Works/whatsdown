@@ -28,7 +28,8 @@ import {
 import {
   Highlight,
   HighlightItem,
-} from  '@/components/animate-ui/primitives/effects/highlight';
+} from '@/components/animate-ui/components/radix/primitives/effects/highlight';
+
 
 
 import { getStrictContext } from '@/lib/get-strict-context';

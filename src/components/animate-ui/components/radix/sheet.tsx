@@ -62,6 +62,7 @@ export const SheetHeader = ({
     {children}
   </div>
 );
+SheetHeader.displayName = 'SheetHeader';
 
 /* =========================
    TEXT
