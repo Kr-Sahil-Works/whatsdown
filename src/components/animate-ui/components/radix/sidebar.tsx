@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Slot } from 'radix-ui';
+import { Slot } from '@radix-ui/react-slot';
 import { cva, VariantProps } from 'class-variance-authority';
 import { PanelLeftIcon } from 'lucide-react';
 import { type Transition } from 'motion/react';
@@ -24,11 +24,13 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/animate-ui/components/animate/tooltip';
+} from '@/components/animate-ui/components/radix/animate/tooltip';
 import {
   Highlight,
   HighlightItem,
-} from '@/components/animate-ui/primitives/effects/highlight';
+} from  '@/components/animate-ui/primitives/effects/highlight';
+
+
 import { getStrictContext } from '@/lib/get-strict-context';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
@@ -128,7 +130,8 @@ function SidebarProvider({
 
   return (
     <LocalSidebarProvider value={contextValue}>
-      <TooltipProvider openDelay={0}>
+      <TooltipProvider delayDuration={0}>
+
         <div
           data-slot="sidebar-wrapper"
           style={
@@ -210,7 +213,7 @@ function Sidebar({
               '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
             } as React.CSSProperties
           }
-          side={side}
+          
         >
           <SheetHeader className="sr-only">
             <SheetTitle>Sidebar</SheetTitle>
@@ -437,16 +440,19 @@ function SidebarGroup({ className, ...props }: SidebarGroupProps) {
   );
 }
 
-type SidebarGroupLabelProps = React.ComponentProps<'div'> & {
+type SidebarGroupLabelProps = React.ComponentProps<'button'> & {
   asChild?: boolean;
 };
+
 
 function SidebarGroupLabel({
   className,
   asChild = false,
   ...props
 }: SidebarGroupLabelProps) {
-  const Comp = asChild ? Slot.Root : 'div';
+  const Comp = asChild ? Slot : 'button';
+
+
 
   return (
     <Comp
@@ -471,7 +477,8 @@ function SidebarGroupAction({
   asChild = false,
   ...props
 }: SidebarGroupActionProps) {
-  const Comp = asChild ? Slot.Root : 'button';
+  const Comp = asChild ? Slot : 'button';
+
 
   return (
     <Comp
@@ -585,7 +592,8 @@ function SidebarMenuButton({
   className,
   ...props
 }: SidebarMenuButtonProps) {
-  const Comp = asChild ? Slot.Root : 'button';
+  const Comp = asChild ? Slot : 'button';
+
   const { isMobile, state } = useSidebar();
 
   const button = (
@@ -614,7 +622,7 @@ function SidebarMenuButton({
   }
 
   return (
-    <Tooltip side="right" align="center">
+    <Tooltip>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
       <TooltipContent hidden={state !== 'collapsed' || isMobile} {...tooltip} />
     </Tooltip>
@@ -632,7 +640,8 @@ function SidebarMenuAction({
   showOnHover = false,
   ...props
 }: SidebarMenuActionProps) {
-  const Comp = asChild ? Slot.Root : 'button';
+  const Comp = asChild ? Slot : 'button';
+
 
   return (
     <Comp
@@ -640,7 +649,7 @@ function SidebarMenuAction({
       data-sidebar="menu-action"
       className={cn(
         // Increases the hit area of the button on mobile.
-        'z-[1] text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer-hover/menu-button:text-sidebar-accent-foreground absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
+        'z-1 text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer-hover/menu-button:text-sidebar-accent-foreground absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
         'after:absolute after:-inset-2 md:after:hidden',
         'peer-data-[size=sm]/menu-button:top-1',
         'peer-data-[size=default]/menu-button:top-1.5',
@@ -759,7 +768,8 @@ function SidebarMenuSubButton({
   className,
   ...props
 }: SidebarMenuSubButtonProps) {
-  const Comp = asChild ? Slot.Root : 'a';
+  const Comp = asChild ? Slot : 'a';
+
 
   return (
     <HighlightItem activeClassName="bg-sidebar-accent text-sidebar-accent-foreground rounded-md">
