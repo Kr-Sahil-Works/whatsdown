@@ -16,13 +16,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "WhatsPlus",
-  description: "WhatsApp style chat app",
   icons: {
-    icon: "/whatsapp.png",
-    shortcut: "//whatsapp.png",
-    apple: "//whatsapp.png",
+    icon: [
+      { url: "/whatsapp.png", sizes: "32x32", type: "image/png" },
+    ],
   },
 };
+
 
 export default function RootLayout({
   children,
