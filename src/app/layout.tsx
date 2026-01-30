@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "WhatsPlus",
   icons: {
     icon: [
-      { url: "/whatsapp.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon.png", sizes: "32x32", type: "image/png" },
     ],
   },
 };
