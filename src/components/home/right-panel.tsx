@@ -21,7 +21,7 @@ const RightPanel = () => {
  
 
   return (
-    <div className="w-3/4 flex flex-col">
+    <div className="flex flex-1 flex-col">
       <div className="w-full sticky top-0 z-50">
         {/* Header */}
         <div className="flex justify-between bg-gray-primary p-3">

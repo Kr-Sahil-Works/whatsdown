@@ -1,84 +1,118 @@
-"use client"
-import { ListFilter, Search } from "lucide-react";
-import { Input } from "../ui/input";
-import ThemeSwitch from "./theme-switch";
-import Conversation from "./conversation";
+"use client";
+
 import { UserButton } from "@clerk/nextjs";
-import UserListDialog from "./user-list-dialog";
-import { useConvexAuth,  useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+import { useConvexAuth, useQuery } from "convex/react";
 import { useEffect } from "react";
+import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
 import { LeftSidebarSkeleton } from "../home/chat-skeleton";
+import ThemeSwitch from "./theme-switch";
+import UserListDialog from "./user-list-dialog";
+import Conversation from "./conversation";
+import SearchInput from "./search-input";
+import type { UIConversation } from "@/types/conversation-ui";
+
+import {
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+} from "@/components/ui/sidebar";
+
 
 
 const LeftPanel = () => {
-	const {isAuthenticated,isLoading} = useConvexAuth();
-	const conversations = useQuery(api.conversations.getMyConversations,isAuthenticated ? undefined : "skip");
-	
-	const {
-  selectedConversation,
-  setSelectedConversation,
-  isChatListOpen,
-} = useConversationStore();
+  const { isAuthenticated, isLoading } = useConvexAuth();
 
+  const conversations = useQuery(
+    api.conversations.getMyConversations,
+    isAuthenticated ? undefined : "skip"
+  ) as UIConversation[] | undefined;
 
-	useEffect(()=>{
-		const conversationIds = conversations?.map((conversation) => conversation._id);
-		if(selectedConversation && conversationIds && !conversationIds.includes(selectedConversation._id)){
-			setSelectedConversation(null);
-		}
-	},[conversations])
+  const {
+    selectedConversation,
+    setSelectedConversation,
+    isChatListOpen,
+    search,
+  } = useConversationStore();
 
-	if (isLoading) return <LeftSidebarSkeleton />;
-	if (!isChatListOpen) return null;
+  /* =====================
+     CLEANUP SELECTED CHAT
+  ===================== */
+  useEffect(() => {
+    const ids = conversations?.map((c) => c._id);
+    if (selectedConversation && ids && !ids.includes(selectedConversation._id)) {
+      setSelectedConversation(null);
+    }
+  }, [conversations, selectedConversation, setSelectedConversation]);
 
-	return (
-		<div className='w-1/4 border-gray-600 border-r'>
-			<div className='sticky top-0 bg-left-panel z-10'>
-				{/* Header */}
-				<div className='flex justify-between bg-gray-primary p-3 items-center'>
-					{isAuthenticated && <UserButton />}
-					<div className='flex items-center gap-3'>
-						<UserListDialog/>
-						<ThemeSwitch />				
-					</div>
-				</div>
-				<div className='p-3 flex items-center'>
-					{/* Search */}
-					<div className='relative h-10 mx-3 flex-1'>
-						<Search
-							className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10'
-							size={18}
-						/>
-						<Input
-							type='text'
-							placeholder='Search or start a new chat'
-							className='pl-10 py-2 text-sm w-full rounded shadow-sm bg-gray-primary focus-visible:ring-transparent'
-						/>
-					</div>
-					<ListFilter className='cursor-pointer' />
-				</div>
-			</div>
+  if (isLoading) return <LeftSidebarSkeleton />;
 
-			{/* Chat List */}
-			<div className='my-3 flex flex-col gap-0 max-h-[80%] overflow-auto'>
-				{/* Conversations will go here */}
+  /* =====================
+     SEARCH FILTER (FIXED)
+  ===================== */
+  const filteredConversations = conversations?.filter((c) => {
+    if (!search) return true;
 
-				{conversations?.map((conversation) => (
-					<Conversation key ={conversation._id} conversation= {conversation} />
-				))}
+    const name = c.isGroup
+      ? c.groupName ?? ""
+      : c.name ?? "";
 
-				{conversations?.length === 0 && (
-					<>
-						<p className='text-center text-gray-500 text-sm mt-3'>No conversations yet</p>
-						<p className='text-center text-gray-500 text-sm mt-3 '>
-							We understand {"you're"} an introvert, but {"you've"} got to start somewhere 😊
-						</p>
-					</>
-				)}
-			</div>
-		</div>
-	);
+    return name.toLowerCase().includes(search.toLowerCase());
+  });
+
+  return (
+    <Sidebar
+      className="border-r bg-background"
+      collapsible="full"
+      collapsed={!isChatListOpen}
+    >
+      {/* HEADER */}
+      <SidebarHeader className="sticky top-0 z-20 border-b bg-background">
+        <div className="flex items-center justify-between px-3 py-2">
+          {isAuthenticated && (
+  <div className="scale-120 origin-left">
+    <UserButton />
+  </div>
+)}
+
+          <div className="flex items-center gap-2">
+            <UserListDialog />
+            <ThemeSwitch />
+          </div>
+        </div>
+
+        {/* SEARCH */}
+        <div className="px-3 pb-3">
+          <SearchInput />
+        </div>
+      </SidebarHeader>
+
+      {/* CHAT LIST */}
+      <SidebarContent className="px-2 py-2">
+        <div className="flex flex-col gap-1">
+          {filteredConversations?.map((conversation) => (
+            <Conversation
+              key={conversation._id}
+              conversation={conversation}
+            />
+          ))}
+
+          {filteredConversations?.length === 0 && search && (
+            <p className="mt-6 text-center text-sm text-muted-foreground">
+              No chats found
+            </p>
+          )}
+
+          {conversations?.length === 0 && !search && (
+            <div className="mt-6 text-center text-sm text-muted-foreground">
+              <p>No conversations yet</p>
+              <p className="mt-1">Even introverts need one chat 🙂</p>
+            </div>
+          )}
+        </div>
+      </SidebarContent>
+    </Sidebar>
+  );
 };
+
 export default LeftPanel;

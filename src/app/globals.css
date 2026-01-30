@@ -197,3 +197,70 @@
 
 
 
+/* ===== Loader ===== */
+.loader {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dash {
+  animation:
+    dashArray 2s ease-in-out infinite,
+    dashOffset 2s linear infinite;
+}
+
+.spin {
+  animation:
+    spinDashArray 2s ease-in-out infinite,
+    spin 8s ease-in-out infinite,
+    dashOffset 2s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes dashArray {
+  0% { stroke-dasharray: 0 1 359 0; }
+  50% { stroke-dasharray: 0 359 1 0; }
+  100% { stroke-dasharray: 359 1 0 0; }
+}
+
+@keyframes spinDashArray {
+  0% { stroke-dasharray: 270 90; }
+  50% { stroke-dasharray: 0 360; }
+  100% { stroke-dasharray: 270 90; }
+}
+
+@keyframes dashOffset {
+  0% { stroke-dashoffset: 365; }
+  100% { stroke-dashoffset: 5; }
+}
+
+@keyframes spin {
+  0% { rotate: 0deg; }
+  100% { rotate: 1080deg; }
+}
+
+/* ===== Floating chats ===== */
+.z {
+  position: absolute;
+  font-size: 20px;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  opacity: 0;
+  white-space: nowrap;
+}
+
+.z-1 { animation: swayUpToRight 2s ease-out infinite; }
+.z-2 { animation: swayUpToRight 2s ease-out 0.5s infinite; }
+.z-3 { animation: swayUpToRight 2s ease-out 1s infinite; }
+.z-4 { animation: swayUpToRight 2s ease-out 1.5s infinite; }
+
+@keyframes swayUpToRight {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(80px, -100px) rotate(30deg);
+    opacity: 0;
+  }
+}

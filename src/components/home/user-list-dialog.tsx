@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import AnimatedCreateButton from "@/components/ui/animated-create-button";
+
 import {
 	Dialog,
 	DialogContent,
@@ -194,17 +196,16 @@ const UserListDialog = () => {
   Cancel
 </Button>
 
-					<Button
-					onClick={handleCreateConversation}
-						disabled={selectedUsers.length === 0 || (selectedUsers.length > 1 && !groupName) || isLoading}
-					>
-						{/* spinner */}
-						{isLoading ? (
-							<div className='w-5 h-5 border-t-2 border-b-2  rounded-full animate-spin' />
-						) : (
-							"Create"
-						)}
-					</Button>
+					<AnimatedCreateButton
+  onClick={handleCreateConversation}
+  loading={isLoading}
+  disabled={
+    selectedUsers.length === 0 ||
+    (selectedUsers.length > 1 && !groupName) ||
+    isLoading
+  }
+/>
+
 				</div>
 			</DialogContent>
 		</Dialog>

@@ -1,0 +1,67 @@
+/* ===========================
+   CREATE BUTTON (PLANE STYLE)
+   UI ONLY – LOGIC UNCHANGED
+=========================== */
+
+.send-btn {
+  font-family: inherit;
+  font-size: 14px; /* 👈 TEXT SIZE (change later if needed) */
+  background: #22c55e; /* WhatsApp green */
+  color: white;
+
+  padding: 0.55em 0.9em;
+  padding-left: 0.75em;
+
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* TEXT */
+.send-btn span {
+  display: block;
+  transition: transform 0.3s ease-in-out;
+  white-space: nowrap;
+}
+
+/* ICON */
+.send-btn svg {
+  display: block;
+  transform-origin: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* HOVER ANIMATION */
+.send-btn:hover .svg-wrapper {
+  animation: fly 0.6s ease-in-out infinite alternate;
+}
+
+.send-btn:hover svg {
+  transform: translateX(1em) rotate(45deg) scale(1.05);
+}
+
+.send-btn:hover span {
+  transform: translateX(4.5em);
+}
+
+/* ACTIVE */
+.send-btn:active {
+  transform: scale(0.96);
+}
+
+/* FLY LOOP */
+@keyframes fly {
+  from {
+    transform: translateY(0.08em);
+  }
+  to {
+    transform: translateY(-0.08em);
+  }
+}
