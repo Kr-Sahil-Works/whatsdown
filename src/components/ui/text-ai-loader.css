@@ -1,0 +1,38 @@
+/* Text AI loader ONLY */
+
+.text-ai-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-ai-loader {
+  width: 60%;
+  height: 10px;
+  border-radius: 2px;
+  background-color: rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.text-ai-loader::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  background-color: #09bc09;
+  border-radius: 2px;
+  animation: text-ai-load 0.8s ease-in-out infinite;
+}
+
+@keyframes text-ai-load {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
+}

@@ -6,6 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import KickUserDialog from "./kick-user-dialog";
 import { UserMinus } from "lucide-react";
 import React from "react";
+import { isAISender, isUserSender } from "@/lib/sender-utils";
 
 
 type ChatAvatarActionsProps = {
@@ -16,10 +17,16 @@ type ChatAvatarActionsProps = {
 const ChatAvatarActions = ({me,message}:ChatAvatarActionsProps) => {
   const {selectedConversation,setSelectedConversation} = useConversationStore();
 
-  const isMember = selectedConversation?.participants.includes(message.sender._id);
+  const isMember =
+  isUserSender(message.sender) &&
+  selectedConversation?.participants.includes(message.sender._id);
+
+
   const KickUser = useMutation(api.conversations.kickUser);
   const createConversation = useMutation(api.conversations.createConversation);
-  const fromAI = message.sender?.name === "ChatGPT";
+
+  const fromAI = isAISender(message.sender);
+
   const isGroup = selectedConversation?.isGroup;
 
   const handleKickUser = async (e:React.MouseEvent) => {

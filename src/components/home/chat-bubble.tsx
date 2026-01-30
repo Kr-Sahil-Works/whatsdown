@@ -7,6 +7,10 @@ import { useEffect, useRef, useState } from "react";
 import MediaDialog from "../home/MediaDialog";
 import ChatAvatarActions from "./chat-avatar-actions";
 import { Bot } from "lucide-react";
+import TextAILoader from "@/components/ui/TextAILoader";
+import { isAISender, isUserSender } from "@/lib/sender-utils";
+import ImageAILoader from "@/components/ui/ImageAILoader";
+
 
 
 type ChatBubbleProps = {
@@ -21,9 +25,13 @@ type ChatBubbleProps = {
 const ImageMessage = ({
 	message,
 	allImages,
+	onLoaded,
 }: {
 	message: IMessage;
 	allImages: string[];
+	onLoaded?: () => void;
+
+
 }) => {
 	const [open, setOpen] = useState(false);
 	const [scale, setScale] = useState(1);
@@ -126,12 +134,18 @@ const ImageMessage = ({
 				onClick={() => setOpen(true)}
 			>
 				<Image
-					src={message.content}
-					width={220}
-					height={220}
-					className="object-cover rounded-xl"
-					alt="chat image"
-				/>
+  src={message.content}
+  width={220}
+  height={220}
+  className="object-cover rounded-xl"
+  alt="chat image"
+  onLoad={onLoaded}
+  onError={(e) => {
+    e.currentTarget.src = "/placeholder.png";
+  }}
+/>
+
+
 			</div>
 
 			{/* DIALOG */}
@@ -207,14 +221,23 @@ const ImageMessage = ({
 
 
 /* ================= VIDEO ================= */
-const VideoMessage = ({ message }: { message: IMessage }) => {
+const VideoMessage = ({
+	message,
+	onLoaded,
+}: {
+	message: IMessage;
+	onLoaded?: () => void;
+}) => {
+
 	return (
 		<div className="relative max-w-55 rounded-xl overflow-hidden bg-black">
 			<video
-				src={message.content}
-				className="w-55 h-auto rounded-xl"
-				controls
-			/>
+	src={message.content}
+	className="w-55 h-auto rounded-xl"
+	controls
+	onLoadedMetadata={onLoaded}
+/>
+
 
 			<div className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded-md flex items-center gap-1">
 				<span>
@@ -297,98 +320,167 @@ const ChatBubble = ({ me, message, previousMessage,allImages }: ChatBubbleProps)
 
 	const { selectedConversation } = useConversationStore();
 	const isMember =
-		selectedConversation?.participants.includes(message.sender?._id) || false;
+  isUserSender(message.sender) &&
+  selectedConversation?.participants.includes(message.sender._id);
+
 	const isGroup = selectedConversation?.isGroup;
-	const fromMe = message.sender?._id === me?._id;
-	const fromAI = message.sender?.name === "ChatGPT";
+	const fromMe =
+  isUserSender(message.sender) &&
+  message.sender._id === me?._id;
+
+
+	const fromAI = isAISender(message.sender);
+	
+
+
+	const isTextAILoading =
+  fromAI &&
+  message.sender?.name === "AI" &&
+  message.content === "__TEXT_AI_LOADING__";
+
+
+   
 	const bgClass = fromMe
 		? "bg-green-chat":
-		!fromAI ?"bg-white dark:bg-gray-primary" : "bg-bule-500 text-white"  ;
+		!fromAI ?"bg-white dark:bg-gray-primary" : "bg-blue-500 text-white"
+  ;
 
 	const [open,setOpen] = useState(false);
 	const [Uploadingbar, setUploadingbar] = useState(false);
 
 
-	/* ================= OTHER USER ================= */
-	if (!fromMe) {
-		return (
-			<>
-				<DateIndicator message={message} previousMessage={previousMessage} />
-				<div className="flex gap-1 w-2/3 mr-auto">
-					<ChatBubbleAvatar
-						isGroup={isGroup}
-						isMember={isMember}
-						message={message}
-						fromAI={fromAI}
-					/>
+/* ================= OTHER USER ================= */
+if (!fromMe) {
+  // 🖼 IMAGE AI LOADING — HARD EXIT
+  if (fromAI && message.content === "__IMAGE_AI_LOADING__") {
+    return (
+      <>
+        <DateIndicator message={message} previousMessage={previousMessage} />
+        <div className="flex gap-1 w-2/3 mr-auto">
+          <ChatBubbleAvatar
+            isGroup={!!isGroup}
+            isMember={true}
+            message={message}
+            fromAI={fromAI}
+          />
+          <ImageAILoader />
+        </div>
+      </>
+    );
+  }
 
-					{message.messageType === "image" ? (
-  <div className="mr-auto">
-    <ImageMessage message={message} allImages={allImages} />
-  </div>
-) : message.messageType === "video" ? (
-  <div className="mr-auto">
-    <VideoMessage message={message} />
-  </div>
-) : (
+  return (
+    <>
+      <DateIndicator message={message} previousMessage={previousMessage} />
 
-				<div
-					className={`flex flex-col z-20 max-w-fit px-2 pt-1 rounded-md shadow-md relative ${bgClass}`}>
-							{!fromAI && <OtherMessageIndicator />}
-							{fromAI && <Bot size={16} className="absolute bottom-0.5 left-2"/>}
-							{<ChatAvatarActions
-							 message={message}
-							 me={me}
-							/> }
-							<TextMessage message={message} />
-							<MessageTime time={time} fromMe={fromMe} />
-						</div>
-					)}
-				</div>
-			</>
-		);
-	}
+      <div className="flex gap-1 w-2/3 mr-auto">
+        <ChatBubbleAvatar
+          isGroup={!!isGroup}
+          isMember={fromAI || !!isMember}
+          message={message}
+          fromAI={fromAI}
+        />
+
+        {/* 🖼 IMAGE */}
+        {message.messageType === "image" && (
+          <ImageMessage message={message} allImages={allImages} />
+        )}
+
+        {/* 🎥 VIDEO */}
+        {message.messageType === "video" && (
+          <VideoMessage message={message} />
+        )}
+
+        {/* 💬 TEXT / TEXT LOADER */}
+        {message.messageType === "text" &&
+ message.content !== "__IMAGE_AI_LOADING__" && (
+          <div
+            className={`flex flex-col z-20 max-w-fit px-2 pt-1 rounded-md shadow-md relative ${bgClass}`}
+          >
+            {!fromAI && <OtherMessageIndicator />}
+            {fromAI && (
+              <Bot size={16} className="absolute bottom-0.5 left-2" />
+            )}
+
+            <ChatAvatarActions message={message} me={me} />
+
+            {isTextAILoading ? (
+              <TextAILoader />
+            ) : (
+              <TextMessage message={message} />
+            )}
+
+            <MessageTime time={time} fromMe={fromMe} />
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+
 
 	/* ================= FROM ME ================= */
-useEffect(() => {
-	if (message.messageType === "image" || message.messageType === "video") {
-		setUploadingbar(true);
-		const t = setTimeout(() => setUploadingbar(false), 1200);
-		return () => clearTimeout(t);
-	}
-}, [message._id]);
+
 
 return (
 	<>
 		<DateIndicator message={message} previousMessage={previousMessage} />
 
 		<div className="flex gap-1 w-2/3 ml-auto">
-			{Uploadingbar ? (
-				/* FAKE UPLOADING ILLUSION */
-				<div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-600 text-white shadow-md animate-pulse ml-auto">
-					<span className="text-sm font-medium">loading</span>
-					<span className="dot-typing" />
-				</div>
-			) : message.messageType === "image" ? (
-				<div className="ml-auto">
-					<ImageMessage message={message} allImages={allImages} />
-				</div>
-			) : message.messageType === "video" ? (
-				<div className="ml-auto">
-					<VideoMessage message={message} />
-				</div>
-			) : (
-				<div
-					className={`flex z-20 max-w-fit px-2 pt-1 rounded-md shadow-md ml-auto relative ${bgClass}`}
-				>
-					<SelfMessageIndicator />
-					<TextMessage message={message} />
-					<MessageTime time={time} fromMe={fromMe} />
-				</div>
-			)}
+			<div className="ml-auto relative">
+				{/* MEDIA / TEXT ALWAYS RENDERS */}
+				{message.messageType === "image" && (
+					<ImageMessage
+						message={message}
+						allImages={allImages}
+						onLoaded={() => setUploadingbar(false)}
+					/>
+				)}
+
+				{message.messageType === "video" && (
+					<VideoMessage
+						message={message}
+						onLoaded={() => setUploadingbar(false)}
+					/>
+				)}
+
+				{message.messageType === "text" && (
+					<div
+						className={`flex z-20 max-w-fit px-2 pt-1 rounded-md shadow-md ml-auto relative ${bgClass}`}
+					>
+						<SelfMessageIndicator />
+						<TextMessage message={message} />
+
+
+						<MessageTime time={time} fromMe={fromMe} />
+					</div>
+				)}
+
+				{/* FAKE LOADING OVERLAY (NO HEIGHT CHANGE) */}
+				{Uploadingbar &&
+					(message.messageType === "image" ||
+						message.messageType === "video") && (
+						<div className="
+							absolute inset-0
+							flex items-center justify-center
+							bg-green-600/70
+							backdrop-blur-sm
+							rounded-xl
+							pointer-events-none
+						">
+							<div className="flex items-center gap-2 text-white">
+								<span className="text-sm font-medium">loading</span>
+								<span className="dot-typing" />
+							</div>
+						</div>
+					)}
+			</div>
 		</div>
 	</>
 );
+
+
 
 }
 
