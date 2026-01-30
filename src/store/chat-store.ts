@@ -49,3 +49,19 @@ export const useConversationStore = create<ConversationStore>((set) => ({
   search: "",
   setSearch: (value) => set({ search: value }),
 }));
+
+export interface IMessage {
+	_id: string;
+	content: string;
+	_creationTime: number;
+	messageType: "text" | "image" | "video";
+	sender: {
+		_id: Id<"users">;
+		image: string;
+		name?: string;
+		tokenIdentifier: string;
+		email: string;
+		_creationTime: number;
+		isOnline: boolean;
+	};
+}
