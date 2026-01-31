@@ -67,7 +67,6 @@ const MessageContainer = () => {
         bg-position-y-[-2px]
       "
       style={{
-           paddingTop: "64px", // header height
         paddingBottom: "calc(96px + env(safe-area-inset-bottom))",
       }}
     >
