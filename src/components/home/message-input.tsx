@@ -141,29 +141,19 @@ const MessageInput = () => {
 			<form onSubmit={handleSentTextMsg} className='w-full flex gap-3'>
 				<div className='flex-1'>
 					<Input
-  ref={inputRef}   // 👈 ADD THIS
-  type='text'
-  placeholder='Type a message'
-  className='py-2 text-sm w-full rounded-lg shadow-sm bg-gray-tertiary focus-visible:ring-transparent'
-  value={msgText}
-  onChange={(e) => setMsgText(e.target.value)}
-/>
-
+						type='text'
+						placeholder='Type a message'
+						className='py-2 text-sm w-full rounded-lg shadow-sm bg-gray-tertiary focus-visible:ring-transparent'
+						value={msgText}
+						onChange={(e) => setMsgText(e.target.value)}
+						
+					/>
 				</div>
 				<div className='mr-4 flex items-center gap-3'>
 				<Button
-  type="submit"
-  size="sm"
-  disabled={isSending}
-  onMouseDown={(e) => {
-    e.preventDefault();        // 🚨 prevents blur
-    inputRef.current?.focus(); // keeps cursor alive
-  }}
-  onTouchStart={(e) => {
-    e.preventDefault();        // 🚨 mobile-specific
-    inputRef.current?.focus();
-  }}
-
+	type='submit'
+	size='sm'
+	disabled={isSending}
 	className='
 		bg-transparent hover:bg-transparent
 		transition-transform duration-150

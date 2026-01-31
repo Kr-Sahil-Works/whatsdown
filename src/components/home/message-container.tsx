@@ -70,15 +70,7 @@ const MessageContainer = () => {
         paddingBottom: "calc(96px + env(safe-area-inset-bottom))",
       }}
     >
-      <div
-  className="
-    px-3 md:px-12
-    pt-16          /* allows scrolling under header */
-    pb-40     /* allows scrolling past fixed input */
-    flex flex-col gap-3
-  "
->
-
+      <div className="px-3 md:px-12 pt-6 flex flex-col gap-3">
         {messages?.map((msg, idx) => (
           <ChatBubble
             key={msg._id}
