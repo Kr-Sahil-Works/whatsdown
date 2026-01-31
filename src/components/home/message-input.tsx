@@ -1,6 +1,6 @@
 "use client";
 
-import { Laugh, Mic, Send, Check } from "lucide-react";
+import { Laugh, Mic, Send, CheckCheck } from "lucide-react";
 import { Input } from "../ui/input";
 import { useState, useRef } from "react";
 import { Button } from "../ui/button";
@@ -43,12 +43,13 @@ const FastSpinner = () => (
   <span
     className="
       h-4 w-4 rounded-full
-      border-[2.5px] border-gray-400
+      border-[2.5px] border-[whitesmoke]
       border-t-transparent
       animate-[spin_0.25s_linear_infinite]
     "
   />
 );
+
 
 /* ================= MESSAGE INPUT ================= */
 const MessageInput = () => {
@@ -97,12 +98,14 @@ const MessageInput = () => {
 
   return (
     <div
-      className="
-        fixed bottom-0 left-0 right-0 z-50
-        bg-gray-primary
-        px-2 pt-2 pb-[env(safe-area-inset-bottom)]
-      "
-    >
+  className="
+    fixed bottom-0 left-0 right-0 z-50
+    bg-gray-primary
+    px-2 pt-2
+    pb-[calc(env(safe-area-inset-bottom)+8px)]
+  "
+>
+
       <form
         onSubmit={handleSentTextMsg}
         className="flex items-end gap-2"
@@ -189,14 +192,15 @@ const MessageInput = () => {
           "
         >
           {isSending ? (
-            <FastSpinner />
-          ) : sentDone ? (
-            <Check className="scale-110" />
-          ) : msgText.length > 0 ? (
-            <Send />
-          ) : (
-            <Mic />
-          )}
+  <FastSpinner />
+) : sentDone ? (
+  <CheckCheck className="scale-110 text-white" />
+) : msgText.length > 0 ? (
+  <Send />
+) : (
+  <Mic />
+)}
+
         </Button>
       </form>
     </div>

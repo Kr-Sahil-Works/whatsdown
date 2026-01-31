@@ -10,7 +10,6 @@ import GroupMembersDialog from "./group-members-dialog";
 import { useConversationStore } from "@/store/chat-store";
 import { useConvexAuth } from "convex/react";
 import { RightChatSkeleton } from "../home/chat-skeleton";
-import { useSwipe } from "@/hooks/useSwipe";
 import ProfilePreviewDialog from "./profile-preview-dialog";
 
 const ANIMATION_MS = 300; // must match Tailwind duration-300
@@ -23,15 +22,6 @@ const RightPanel = () => {
 
   // controls delayed unmount
   const [isClosing, setIsClosing] = useState(false);
-
-  // velocity-based swipe (RIGHT → back)
-  const swipe = useSwipe({
-    onSwipeRight: () => {
-      if (selectedConversation && !isClosing) {
-        setIsClosing(true);
-      }
-    },
-  });
 
   // delay unmount until slide-out animation finishes
   useEffect(() => {
@@ -51,8 +41,7 @@ const RightPanel = () => {
 
   return (
     <div
-      {...(selectedConversation ? swipe : {})}
-      className={`
+            className={`
         fixed inset-0 w-full h-dvh
         md:relative md:inset-auto md:flex-1 md:h-full
         bg-background
@@ -123,26 +112,13 @@ const RightPanel = () => {
           </div>
 
 {/* ================= CHAT + INPUT ================= */}
-<div className="flex flex-col flex-1 min-h-0">
-
-  {/* ✅ HEADER (ONLY ONE, FIXED) */}
-  <div className="shrink-0 sticky top-0 z-50 bg-gray-primary">
-    {/* header content already above — DO NOTHING */}
-  </div>
-
-  {/* ✅ CHAT — ONLY THIS SCROLLS */}
-  <div className="flex-1 min-h-0 overflow-y-auto">
-    <MessageContainer />
-  </div>
-
-  {/* ✅ INPUT — FIXED */}
+<div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+  <MessageContainer />
   <MessageInput />
 </div>
 
 
 
-
-          
         </>
       )}
 
