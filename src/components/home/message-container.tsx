@@ -65,24 +65,25 @@ const MessageContainer = () => {
 			.map((m: IMessage) => m.content) || [];
 
 	return (
-  <div
-    ref={containerRef}
-    className="
-      relative flex-1 overflow-y-auto overflow-x-hidden overscroll-contain
-      bg-(image:--bg-chat-tile-light)
-      dark:bg-(image:--bg-chat-tile-dark)
-      bg-repeat
-      bg-size-[420px_420px]
-      bg-position-[0_0]
-      min-h-full
-      before:absolute before:inset-0 before:pointer-events-none
-      before:bg-gradient-to-b
-      before:from-transparent
-      before:via-transparent
-      before:to-background/25
-    "
-  >
-    <div className="px-3 md:px-12 pt-8 flex flex-col gap-3">
+ <div
+  ref={containerRef}
+  className="
+  relative flex-1
+  overflow-y-auto overflow-x-hidden
+  overscroll-contain
+  touch-pan-y
+
+  bg-(image:--bg-chat-tile-light)
+  dark:bg-(image:--bg-chat-tile-dark)
+  bg-repeat
+  bg-size-[420px_420px]
+  bg-position-[0_-1px]
+  min-h-[110%]
+"
+
+>
+
+    <div className="px-3 md:px-12 pt-6 flex flex-col gap-3">
       {messages?.map((msg, idx) => (
         <ChatBubble
           key={msg._id}

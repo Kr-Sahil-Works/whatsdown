@@ -130,9 +130,16 @@ const RightPanel = () => {
             </div>
 
             {/* INPUT (STAYS ABOVE KEYBOARD) */}
-            <div className="shrink-0 pb-safe bg-background">
-              <MessageInput />
-            </div>
+           <div
+  className="
+    sticky bottom-0 z-40
+    bg-background
+    pb-safe
+  "
+>
+  <MessageInput />
+</div>
+
           </div>
         </>
       )}
