@@ -7,11 +7,16 @@ body {
   overflow: hidden;              /* 🔒 stop body scroll */
   overscroll-behavior: none;     /* 🔒 stop bounce */
    touch-action: manipulation;
+    overscroll-behavior-x: none;
+  touch-action: pan-y;
 }
+
 
 body {
   min-height: 100dvh;
 }
+
+
 
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
@@ -214,14 +219,21 @@ body {
   ::-webkit-scrollbar {
     width: 8px;
   }
+
   ::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--gray-primary));
-    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.55); /* darker, clearer */
+    border-radius: 6px;
   }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.75); /* better contrast on touch */
+  }
+
   ::-webkit-scrollbar-track {
     background-color: hsl(var(--container));
   }
 }
+
 
 
 

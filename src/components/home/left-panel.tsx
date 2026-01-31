@@ -83,15 +83,26 @@ export default function LeftPanel({ onPreview }: Props) {
 </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-2">
-          {filtered?.map((c) => (
-            <Conversation
-              key={c._id}
-              conversation={c}
-              onAvatarClick={() => onPreview(c)}
-            />
-          ))}
-        </div>
+        <div
+  className="
+    flex-1 overflow-y-auto
+    px-2 pt-2
+    bg-white/40 dark:bg-black/25
+    backdrop-blur-md
+  "
+>
+  {filtered?.map((c) => (
+    <Conversation
+      key={c._id}
+      conversation={c}
+      onAvatarClick={() => onPreview(c)}
+    />
+  ))}
+
+  {/* fills empty space below chats */}
+  <div className="h-full" />
+</div>
+
       </div>
 
       {/* ================= DESKTOP (≥1024px) ================= */}
@@ -123,7 +134,13 @@ export default function LeftPanel({ onPreview }: Props) {
 </div>
         </SidebarHeader>
 
-        <SidebarContent className="px-2 py-2">
+        <SidebarContent
+  className="
+    px-2 py-2
+    bg-white/40 dark:bg-black/25
+    backdrop-blur-md
+  "
+>
           {filtered?.map((c) => (
             <Conversation
               key={c._id}
