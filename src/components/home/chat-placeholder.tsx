@@ -17,7 +17,8 @@ const ChatPlaceHolder = () => {
 
   return (
     <div
-      className="relative flex w-full md:w-3/4 h-full items-center justify-center overflow-hidden
+      className="relative flex w-full md:w-full
+ h-full items-center justify-center overflow-hidden
       bg-linear-to-br from-gray-100 via-green-100/70 to-gray-200
       dark:from-neutral-900 dark:via-green-900/40 dark:to-neutral-800"
     >

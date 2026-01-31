@@ -3,6 +3,7 @@ import { create } from "zustand";
 
 export type Conversation = {
   _id: Id<"conversations">;
+  _creationTime: number;
   image?: string;
   participants: Id<"users">[];
   isGroup: boolean;

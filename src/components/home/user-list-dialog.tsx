@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AnimatedCreateButton from "@/components/ui/animated-create-button";
+import { Users } from "lucide-react";
 
 import {
 	Dialog,
@@ -86,6 +87,7 @@ const UserListDialog = () => {
 			
 			setSelectedConversation({
 				_id:conversationId,
+				_creationTime: Date.now(),
 				participants: selectedUsers,
 				isGroup,
 				image:isGroup ? renderedImage: users?.find((user)=> user._id === selectedUsers[0])?.image,
@@ -110,6 +112,11 @@ const UserListDialog = () => {
 
 	return (
 		<Dialog open={isUserListOpen} onOpenChange={setUserListOpen}>
+  <DialogTrigger asChild>
+    <Button size="icon" variant="ghost" className="lg:hidden">
+      <Users className="h-5 w-5" />
+    </Button>
+  </DialogTrigger>
 			<DialogContent
   className="
     bg-background/50

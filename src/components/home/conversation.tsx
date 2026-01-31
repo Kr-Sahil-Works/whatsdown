@@ -6,7 +6,12 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
 
-const Conversation = ({ conversation }: { conversation: any }) => {
+type Props = {
+  conversation: any;
+  onAvatarClick?: () => void;
+};
+
+const Conversation = ({ conversation, onAvatarClick }: Props) => {
   const conversationImage = conversation.groupImage || conversation.image;
   const conversationName = conversation.groupName || conversation.name;
   const lastMessage = conversation.lastMessage;
@@ -32,16 +37,22 @@ const Conversation = ({ conversation }: { conversation: any }) => {
       `}
     >
       {/* AVATAR */}
-      <Avatar className="relative shrink-0">
+      <Avatar
+        className="relative shrink-0 cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation(); // 👈 prevents opening the chat
+          onAvatarClick?.();
+        }}
+      >
         {conversation.isOnline && (
-  <>
-    {/* Outer glow ring */}
-    <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full bg-green-500/30 animate-pulse" />
+          <>
+            {/* Outer glow ring */}
+            <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full bg-green-500/30 animate-pulse" />
 
-    {/* Solid dot */}
-    <span className="absolute bottom-0.5 right-0.5 h-2.5 w-2.5 rounded-full bg-green-600 border-2 border-background" />
-  </>
-)}
+            {/* Solid dot */}
+            <span className="absolute bottom-0.5 right-0.5 h-2.5 w-2.5 rounded-full bg-green-600 border-2 border-background" />
+          </>
+        )}
 
         <AvatarImage
           src={conversationImage || "/placeholder.png"}

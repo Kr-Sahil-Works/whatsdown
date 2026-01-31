@@ -4,6 +4,12 @@ import "./globals.css";
 import ClientProviders from "./client-providers";
 import { Toaster } from "react-hot-toast";
 
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover"
+/>
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

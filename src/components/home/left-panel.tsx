@@ -18,7 +18,11 @@ import {
   SidebarContent,
 } from "@/components/ui/sidebar";
 
-const LeftPanel = () => {
+type Props = {
+  onPreview: (c: UIConversation | null) => void;
+};
+
+export default function LeftPanel({ onPreview }: Props) {
   const { isAuthenticated, isLoading } = useConvexAuth();
 
   const conversations = useQuery(
@@ -26,12 +30,8 @@ const LeftPanel = () => {
     isAuthenticated ? undefined : "skip"
   ) as UIConversation[] | undefined;
 
-  const {
-    selectedConversation,
-    setSelectedConversation,
-    isChatListOpen,
-    search,
-  } = useConversationStore();
+  const { selectedConversation, setSelectedConversation, search } =
+    useConversationStore();
 
   useEffect(() => {
     const ids = conversations?.map((c) => c._id);
@@ -42,55 +42,97 @@ const LeftPanel = () => {
 
   if (isLoading) return <LeftSidebarSkeleton />;
 
-  const filteredConversations = conversations?.filter((c) => {
-    if (!search) return true;
+  const filtered = conversations?.filter((c) => {
     const name = c.isGroup ? c.groupName ?? "" : c.name ?? "";
-    return name.toLowerCase().includes(search.toLowerCase());
+    return !search || name.toLowerCase().includes(search.toLowerCase());
   });
 
   return (
-    <Sidebar
-  collapsible="full"
-  collapsed={!isChatListOpen}
-  className={`
-    border-r bg-background
-    w-full! md:w-auto!
-    ${selectedConversation ? "hidden md:flex" : "flex"}
-  `}
->
-
-
-      {/* HEADER */}
-      <SidebarHeader className="sticky top-0 z-20 border-b bg-background">
-        <div className="flex items-center justify-between px-3 py-2">
-          {isAuthenticated && (
-            <div className="scale-120 origin-left">
-              <UserButton />
-            </div>
-          )}
+    <>
+      {/* ================= MOBILE + TABLET (<1024px) ================= */}
+      <div
+        className={`
+          flex flex-col w-full h-full
+          lg:hidden
+          ${selectedConversation ? "hidden" : "flex"}
+          bg-container
+        `}
+      >
+        <div className="sticky top-0 z-20 border-b bg-gray-primary">
+          <div className="flex justify-between px-3 py-2">
+            {isAuthenticated && (
+  <div className="scale-135 pt-1 origin-left ml-2">
+    <UserButton />
+  </div>
+)}
 
           <div className="flex items-center gap-2">
-            <UserListDialog />
-            <ThemeSwitch />
+  {/* User list button - MOBILE */}
+  <div className="lg:hidden">
+    <UserListDialog />
+  </div>
+
+  <div className="mr-3 pt-1.5 scale-[0.99]">
+    <ThemeSwitch />
+  </div>
+</div>
+
           </div>
+          <div className="px-3 pb-3 w-[96%] mx-auto">
+  <SearchInput />
+</div>
         </div>
 
-        {/* SEARCH */}
-        <div className="px-3 pb-3 w-[90%] mx-auto">
-          <SearchInput />
-        </div>
-      </SidebarHeader>
-
-      {/* CHAT LIST */}
-      <SidebarContent className="px-2 py-2">
-        <div className="flex flex-col gap-1">
-          {filteredConversations?.map((conversation) => (
-            <Conversation key={conversation._id} conversation={conversation} />
+        <div className="flex-1 overflow-y-auto px-2">
+          {filtered?.map((c) => (
+            <Conversation
+              key={c._id}
+              conversation={c}
+              onAvatarClick={() => onPreview(c)}
+            />
           ))}
         </div>
-      </SidebarContent>
-    </Sidebar>
-  );
-};
+      </div>
 
-export default LeftPanel;
+      {/* ================= DESKTOP (≥1024px) ================= */}
+      <Sidebar
+        className="
+          hidden lg:flex
+          w-95 shrink-0
+          border-r
+          bg-container
+        "
+      >
+        <SidebarHeader className="border-b bg-gray-primary">
+          <div className="flex justify-between px-3 py-2">
+            {isAuthenticated && (
+  <div className="scale-135 pt-1 origin-left ml-2">
+    <UserButton />
+  </div>
+)}
+
+            <div className="flex gap-2">
+              <UserListDialog />
+            <div className="mr-2 pt-1.5 scale-[0.99]">
+  <ThemeSwitch />
+</div>
+            </div>
+          </div>
+         <div className="px-3 pb-3 w-[96%] mx-auto">
+  <SearchInput />
+</div>
+        </SidebarHeader>
+
+        <SidebarContent className="px-2 py-2">
+          {filtered?.map((c) => (
+            <Conversation
+              key={c._id}
+              conversation={c}
+              onAvatarClick={() => onPreview(c)}
+            />
+          ))}
+        </SidebarContent>
+      </Sidebar>
+    </>
+  );
+}

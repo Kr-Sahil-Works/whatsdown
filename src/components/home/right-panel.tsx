@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Video, X, ArrowLeft } from "lucide-react";
 import MessageInput from "./message-input";
@@ -9,38 +10,82 @@ import GroupMembersDialog from "./group-members-dialog";
 import { useConversationStore } from "@/store/chat-store";
 import { useConvexAuth } from "convex/react";
 import { RightChatSkeleton } from "../home/chat-skeleton";
+import { useSwipe } from "@/hooks/useSwipe";
+import ProfilePreviewDialog from "./profile-preview-dialog";
+
+const ANIMATION_MS = 300; // must match Tailwind duration-300
 
 const RightPanel = () => {
+  const [showProfile, setShowProfile] = useState(false);
   const { selectedConversation, setSelectedConversation } =
     useConversationStore();
   const { isLoading } = useConvexAuth();
 
+  // controls delayed unmount
+  const [isClosing, setIsClosing] = useState(false);
+
+  // velocity-based swipe (RIGHT → back)
+  const swipe = useSwipe({
+    onSwipeRight: () => {
+      if (selectedConversation && !isClosing) {
+        setIsClosing(true);
+      }
+    },
+  });
+
+  // delay unmount until slide-out animation finishes
+  useEffect(() => {
+    if (!isClosing) return;
+
+    const timer = setTimeout(() => {
+      setSelectedConversation(null);
+      setIsClosing(false);
+    }, ANIMATION_MS);
+
+    return () => clearTimeout(timer);
+  }, [isClosing, setSelectedConversation]);
+
   if (isLoading) return <RightChatSkeleton />;
+
+  const isOpen = selectedConversation && !isClosing;
 
   return (
     <div
+      {...(selectedConversation ? swipe : {})}
       className={`
-        flex flex-1 flex-col
-        md:flex
-        ${selectedConversation ? "flex" : "hidden md:flex"}
+        fixed inset-y-0 right-0 w-full
+        md:relative md:inset-auto md:flex-1 md:h-full
+        bg-background
+        flex flex-col
+        transition-transform duration-300 ease-out
+        md:translate-x-0
+        ${isOpen ? "translate-x-0" : "translate-x-full md:flex"}
       `}
     >
-      {!selectedConversation ? (
-        <ChatPlaceHolder />
-      ) : (
+      {/* 🔴 DESKTOP PLACEHOLDER ONLY — NOT MOUNTED ON MOBILE */}
+      {!selectedConversation && (
+        <div className="hidden lg:flex flex-1">
+          <ChatPlaceHolder />
+        </div>
+      )}
+
+      {/* ✅ CHAT VIEW */}
+      {selectedConversation && (
         <>
           {/* HEADER */}
           <div className="sticky top-0 z-50 bg-gray-primary">
             <div className="flex justify-between p-3">
               <div className="flex gap-2 items-center">
-                {/* MOBILE BACK */}
                 <ArrowLeft
-                  size={20}
-                  className="md:hidden cursor-pointer"
-                  onClick={() => setSelectedConversation(null)}
+                  size={22}
+                  className="cursor-pointer mr-2"
+                  onClick={() => setIsClosing(true)}
                 />
 
-                <Avatar>
+                <Avatar
+                  className="cursor-pointer"
+                  onClick={() => setShowProfile(true)}
+                >
                   <AvatarImage
                     src={
                       selectedConversation.groupImage ||
@@ -71,18 +116,25 @@ const RightPanel = () => {
                 <X
                   size={18}
                   className="cursor-pointer"
-                  onClick={() => setSelectedConversation(null)}
+                  onClick={() => setIsClosing(true)}
                 />
               </div>
             </div>
           </div>
 
-          {/* MESSAGES */}
+          {/* CHAT */}
           <MessageContainer />
-
-          {/* INPUT */}
           <MessageInput />
         </>
+      )}
+
+      {/* PROFILE PREVIEW */}
+      {selectedConversation && (
+        <ProfilePreviewDialog
+          open={showProfile}
+          onClose={() => setShowProfile(false)}
+          conversation={selectedConversation}
+        />
       )}
     </div>
   );

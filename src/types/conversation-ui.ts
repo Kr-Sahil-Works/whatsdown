@@ -1,28 +1,23 @@
-import { Id } from "../../convex/_generated/dataModel";
+import type { Id } from "../../convex/_generated/dataModel";
+import type { Conversation } from "@/store/chat-store";
 
 /**
- * Frontend-only conversation type
- * This matches what getMyConversations ACTUALLY returns
+ * UIConversation
+ * ----------------
+ * Extends the base Conversation type from the store
+ * and adds frontend-only fields returned by getMyConversations
  */
-export type UIConversation = {
-  _id: Id<"conversations">;
-
-  // conversation meta
-  isGroup: boolean;
-  participants: Id<"users">[];
-
-  // names & images (added at runtime)
-  name?: string;        // DM name (from userDetails)
+export type UIConversation = Conversation & {
+  // frontend-only / derived fields
+  name?: string;
   image?: string;
-  groupName?: string;
-  groupImage?: string;
+  isOnline?: boolean;
 
-  // last message
   lastMessage?: {
     _id: Id<"messages">;
-    _creationTime: number;
     content: string;
-    messageType: "text" | "image" | "video";
     sender: Id<"users">;
-  } | null;
+    _creationTime: number;
+    messageType: "text" | "image" | "video";
+  };
 };

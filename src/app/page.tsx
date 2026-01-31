@@ -1,17 +1,44 @@
-import { useTheme } from "next-themes";
+"use client";
+
+import { useState } from "react";
 import LeftPanel from "../components/home/left-panel";
 import RightPanel from "../components/home/right-panel";
+import ProfilePreviewDialog from "../components/home/profile-preview-dialog";
+import { useConversationStore } from "@/store/chat-store";
+import type { UIConversation } from "@/types/conversation-ui";
 
 export default function Home() {
+  const { selectedConversation } = useConversationStore();
+  const [previewConversation, setPreviewConversation] =
+    useState<UIConversation | null>(null);
 
-	return (
-		<main className='m-5'>
-	<div className='flex overflow-y-hidden h-[calc(100vh-50px)] max-w-425 mx-auto bg-left-panel'>
-		{/* Green background decorator for Light Mode */}
-		<div className='fixed top-0 left-0 w-full h-36 bg-green-primary dark:bg-transparent -z-30' />
-		<LeftPanel />
-		<RightPanel />
-	</div>
-</main>
-	);
+  return (
+    <main className="relative h-screen w-screen overflow-hidden">
+      <div className="relative z-10 flex h-full w-full">
+        {/* LEFT — ALWAYS ON DESKTOP */}
+        <LeftPanel onPreview={setPreviewConversation} />
+
+        {/* RIGHT — DESKTOP */}
+        <div className="hidden md:flex flex-1 min-h-0">
+          <RightPanel />
+        </div>
+
+        {/* RIGHT — MOBILE */}
+        {selectedConversation && (
+          <div className="md:hidden fixed inset-y-0 right-0 w-full z-40">
+            <RightPanel />
+          </div>
+        )}
+      </div>
+
+      {/* PROFILE PREVIEW */}
+      {previewConversation && (
+        <ProfilePreviewDialog
+          open
+          onClose={() => setPreviewConversation(null)}
+          conversation={previewConversation}
+        />
+      )}
+    </main>
+  );
 }
