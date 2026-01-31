@@ -60,6 +60,7 @@ const MessageContainer = () => {
       ref={containerRef}
       className="
         flex-1 overflow-y-auto overscroll-contain touch-pan-y
+         overscroll-y-auto   /* ✅ ADD THIS */
         bg-(image:--bg-chat-tile-light)
         dark:bg-(image:--bg-chat-tile-dark)
         bg-repeat
