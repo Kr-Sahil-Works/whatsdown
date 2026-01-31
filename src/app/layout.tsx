@@ -9,6 +9,13 @@ import { Toaster } from "react-hot-toast";
   content="width=device-width, initial-scale=1, viewport-fit=cover"
 />
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

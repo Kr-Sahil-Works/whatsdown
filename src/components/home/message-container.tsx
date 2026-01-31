@@ -68,14 +68,16 @@ const MessageContainer = () => {
 		<div
 			ref={containerRef}
 			className="
-				relative p-3 flex-1 overflow-auto
+  relative flex-1 overflow-y-auto overflow-x-hidden
 				bg-(image:--bg-chat-tile-light)
 				dark:bg-(image:--bg-chat-tile-dark)
 				bg-repeat
-				bg-cover
+bg-size-[420px_420px]
+min-h-full
+
 			"
 		>
-			<div className="mx-12 flex flex-col gap-3">
+			<div className="px-3 md:px-12 flex flex-col gap-3">
 				{messages?.map((msg, idx) => (
 					<ChatBubble
 						key={msg._id}
@@ -87,7 +89,7 @@ const MessageContainer = () => {
 				))}
 
 				{/* ✅ small bottom margin */}
-				<div className="h-6" />
+				<div className="h-20 md:h-6" />
 			</div>
 		</div>
 	);

@@ -73,7 +73,7 @@ const RightPanel = () => {
       {selectedConversation && (
         <>
           {/* HEADER */}
-          <div className="sticky top-0 z-50 bg-gray-primary">
+          <div className="shrink-0 z-50 bg-gray-primary">
             <div className="flex justify-between p-3">
               <div className="flex gap-2 items-center">
                 <ArrowLeft
@@ -128,9 +128,9 @@ const RightPanel = () => {
     <MessageContainer />
   </div>
 
-  <div className="shrink-0">
-    <MessageInput />
-  </div>
+ <div className="shrink-0 pb-safe">
+  <MessageInput />
+</div>
 </div>
 
         </>
