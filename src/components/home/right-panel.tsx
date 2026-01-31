@@ -53,7 +53,7 @@ const RightPanel = () => {
     <div
       {...(selectedConversation ? swipe : {})}
       className={`
-        fixed inset-y-0 right-0 w-full
+        fixed inset-0 w-full h-dvh
         md:relative md:inset-auto md:flex-1 md:h-full
         bg-background
         flex flex-col
@@ -123,8 +123,16 @@ const RightPanel = () => {
           </div>
 
           {/* CHAT */}
-          <MessageContainer />
-          <MessageInput />
+        <div className="flex flex-col flex-1 min-h-0">
+  <div className="flex-1 overflow-y-auto overscroll-contain">
+    <MessageContainer />
+  </div>
+
+  <div className="shrink-0">
+    <MessageInput />
+  </div>
+</div>
+
         </>
       )}
 

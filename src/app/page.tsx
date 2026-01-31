@@ -13,7 +13,7 @@ export default function Home() {
     useState<UIConversation | null>(null);
 
   return (
-    <main className="relative h-screen w-screen overflow-hidden">
+    <main className="relative h-dvh w-dvw overflow-hidden bg-container">
       <div className="relative z-10 flex h-full w-full">
         {/* LEFT — ALWAYS ON DESKTOP */}
         <LeftPanel onPreview={setPreviewConversation} />
