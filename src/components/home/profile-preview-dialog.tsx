@@ -4,13 +4,13 @@ import { useState } from "react";
 import { X, MessageSquare, Info } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useConversationStore } from "@/store/chat-store";
-import type { Conversation } from "@/store/chat-store";
+import type { UIConversation } from "@/types/conversation-ui";
 import { formatDate } from "@/lib/utils";
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  conversation: Conversation;
+  conversation: UIConversation;
 };
 
 export default function ProfilePreviewDialog({
@@ -90,7 +90,7 @@ export default function ProfilePreviewDialog({
             <div>
               <span className="text-gray-400">Conversation created:</span>
               <br />
-              {formatDate(conversation._creationTime)}
+              {formatDate(conversation.createdAt)}
             </div>
 
             {conversation.lastMessage && (

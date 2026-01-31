@@ -87,7 +87,7 @@ const UserListDialog = () => {
 			
 			setSelectedConversation({
 				_id:conversationId,
-				_creationTime: Date.now(),
+				createdAt: Date.now(),
 				participants: selectedUsers,
 				isGroup,
 				image:isGroup ? renderedImage: users?.find((user)=> user._id === selectedUsers[0])?.image,

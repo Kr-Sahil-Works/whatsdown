@@ -1,16 +1,20 @@
 import type { Id } from "../../convex/_generated/dataModel";
-import type { Conversation } from "@/store/chat-store";
 
-/**
- * UIConversation
- * ----------------
- * Extends the base Conversation type from the store
- * and adds frontend-only fields returned by getMyConversations
- */
-export type UIConversation = Conversation & {
-  // frontend-only / derived fields
+export type UIConversation = {
+  _id: Id<"conversations">;
+
+  createdAt: number; // ✅ UI-friendly timestamp
+
+  participants: Id<"users">[];
+  isGroup: boolean;
+
   name?: string;
   image?: string;
+
+  groupName?: string;
+  groupImage?: string;
+  admin?: Id<"users">;
+
   isOnline?: boolean;
 
   lastMessage?: {

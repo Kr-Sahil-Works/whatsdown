@@ -9,13 +9,14 @@ import {
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Crown } from "lucide-react";
-import { Conversation } from "@/store/chat-store";
+import type { UIConversation } from "@/types/conversation-ui";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 
 type GroupMembersDialogProps = {
-  selectedConversation:Conversation;
-}
+  selectedConversation: UIConversation;
+};
+
 
 
 const GroupMembersDialog = ({selectedConversation}: GroupMembersDialogProps) => {

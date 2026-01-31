@@ -1,29 +1,12 @@
 import { Id } from "../../convex/_generated/dataModel";
 import { create } from "zustand";
+import type { UIConversation } from "@/types/conversation-ui";
 
-export type Conversation = {
-  _id: Id<"conversations">;
-  _creationTime: number;
-  image?: string;
-  participants: Id<"users">[];
-  isGroup: boolean;
-  groupName?: string;
-  groupImage?: string;
-  admin?: Id<"users">;
-  name?: string; // 👈 comes from userDetails
-  isOnline?: boolean;
-  lastMessage?: {
-    _id: Id<"messages">;
-    content: string;
-    sender: Id<"users">;
-    _creationTime: number;
-    messageType: "text" | "image" | "video";
-  };
-};
+/* ================= UI STORE ================= */
 
 type ConversationStore = {
-  selectedConversation: Conversation | null;
-  setSelectedConversation: (c: Conversation | null) => void;
+  selectedConversation: UIConversation | null;
+  setSelectedConversation: (c: UIConversation | null) => void;
 
   isChatListOpen: boolean;
   setChatListOpen: (open: boolean) => void;
@@ -31,7 +14,6 @@ type ConversationStore = {
   isUserListOpen: boolean;
   setUserListOpen: (open: boolean) => void;
 
-  // ✅ SEARCH
   search: string;
   setSearch: (value: string) => void;
 };
@@ -46,23 +28,21 @@ export const useConversationStore = create<ConversationStore>((set) => ({
   isUserListOpen: false,
   setUserListOpen: (open) => set({ isUserListOpen: open }),
 
-  // ✅ SEARCH
   search: "",
   setSearch: (value) => set({ search: value }),
 }));
-
 export interface IMessage {
-	_id: string;
-	content: string;
-	_creationTime: number;
-	messageType: "text" | "image" | "video";
-	sender: {
-		_id: Id<"users">;
-		image: string;
-		name?: string;
-		tokenIdentifier: string;
-		email: string;
-		_creationTime: number;
-		isOnline: boolean;
-	};
+  _id: string;
+  content: string;
+  _creationTime: number;
+  messageType: "text" | "image" | "video";
+  sender: {
+    _id: Id<"users">;
+    image: string;
+    name?: string;
+    tokenIdentifier: string;
+    email: string;
+    _creationTime: number;
+    isOnline: boolean;
+  };
 }

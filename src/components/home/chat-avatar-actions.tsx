@@ -9,6 +9,7 @@ import KickUserDialog from "./kick-user-dialog";
 import { UserMinus } from "lucide-react";
 import React from "react";
 import { isAISender, isUserSender } from "@/lib/sender-utils";
+import { Id } from "../../../convex/_generated/dataModel";
 
 
 type ChatAvatarActionsProps = {
@@ -43,7 +44,9 @@ const ChatAvatarActions = ({me,message}:ChatAvatarActionsProps) => {
 
           setSelectedConversation({
             ...selectedConversation,
-            participants: selectedConversation.participants.filter((id) => id !== message.sender._id)
+            participants: selectedConversation.participants.filter(
+  (id: Id<"users">) => id !== message.sender._id
+)
           })
         } catch (error) {
           toast.error("Failed to kick the user")
@@ -59,13 +62,15 @@ const ChatAvatarActions = ({me,message}:ChatAvatarActionsProps) => {
         })
 
         setSelectedConversation({
-          _id:conversationId,
-          name:message.sender.name,
-          participants: [me._id, message.sender._id],
-          isGroup: false,
-          isOnline: message.sender.isOnline,
-          image: message.sender.image,
-        })
+  _id: conversationId,
+  createdAt: Date.now(), // ✅ correct & safe
+  name: message.sender.name,
+  participants: [me._id, message.sender._id],
+  isGroup: false,
+  isOnline: message.sender.isOnline,
+  image: message.sender.image,
+});
+
 
       } catch (error) {
         toast.error("Failed to get user info")
