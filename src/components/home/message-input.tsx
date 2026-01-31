@@ -141,26 +141,39 @@ const MessageInput = () => {
 			<form onSubmit={handleSentTextMsg} className='w-full flex gap-3'>
 				<div className='flex-1'>
 					<Input
-						type='text'
-						placeholder='Type a message'
-						className='py-2 text-sm w-full rounded-lg shadow-sm bg-gray-tertiary focus-visible:ring-transparent'
-						value={msgText}
-						onChange={(e) => setMsgText(e.target.value)}
-						
-					/>
+  ref={inputRef}                 // ✅ ADD THIS LINE
+  type='text'
+  placeholder='Type a message'
+  className='py-2 text-sm w-full rounded-lg shadow-sm bg-gray-tertiary focus-visible:ring-transparent'
+  value={msgText}
+  onChange={(e) => setMsgText(e.target.value)}
+/>
+
 				</div>
 				<div className='mr-4 flex items-center gap-3'>
 				<Button
-	type='submit'
-	size='sm'
-	disabled={isSending}
-	className='
-		bg-transparent hover:bg-transparent
-		transition-transform duration-150
-		hover:scale-110 active:scale-95
-		disabled:opacity-70
-	'
+  type="submit"
+  size="sm"
+  disabled={isSending}
+
+  onMouseDown={(e) => {
+    e.preventDefault();              // 🚫 stops blur
+    inputRef.current?.focus();       // ✅ keeps cursor
+  }}
+
+  onTouchStart={(e) => {
+    e.preventDefault();              // 📱 mobile fix
+    inputRef.current?.focus();
+  }}
+
+  className='
+    bg-transparent hover:bg-transparent
+    transition-transform duration-150
+    hover:scale-110 active:scale-95
+    disabled:opacity-70
+  '
 >
+
 	{isSending ? (
 		<FastSpinner />
 	) : sentDone ? (
