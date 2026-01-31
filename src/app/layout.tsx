@@ -1,21 +1,37 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientProviders from "./client-providers";
 import { Toaster } from "react-hot-toast";
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, viewport-fit=cover"
-/>
-
-export const viewport = {
+/* =======================
+   VIEWPORT (NO ZOOM)
+======================= */
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: "cover",
 };
 
+/* =======================
+   METADATA + PWA
+======================= */
+export const metadata: Metadata = {
+  title: "WhatsPlus",
+  description: "WhatsPlus chat app",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/icon.png",
+  },
+  manifest: "/manifest.json",
+  themeColor: "#0b141a",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+  },
+};
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,13 +43,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "WhatsPlus",
-  icons: {
-    icon: "/favicon.ico",
-  },
-};
-
 export default function RootLayout({
   children,
 }: {
@@ -41,7 +50,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body
+        className={`
+          ${geistSans.variable}
+          ${geistMono.variable}
+          overscroll-none
+          touch-manipulation
+        `}
+      >
         <ClientProviders>
           {children}
           <Toaster />

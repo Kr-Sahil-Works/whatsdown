@@ -72,8 +72,8 @@ const RightPanel = () => {
       {/* ✅ CHAT VIEW */}
       {selectedConversation && (
         <>
-          {/* HEADER */}
-          <div className="shrink-0 z-50 bg-gray-primary">
+          {/* ================= HEADER (FIXED) ================= */}
+          <div className="sticky top-0 shrink-0 z-50 bg-gray-primary">
             <div className="flex justify-between p-3">
               <div className="flex gap-2 items-center">
                 <ArrowLeft
@@ -122,17 +122,18 @@ const RightPanel = () => {
             </div>
           </div>
 
-          {/* CHAT */}
-        <div className="flex flex-col flex-1 min-h-0">
-  <div className="flex-1 overflow-y-auto overscroll-contain">
-    <MessageContainer />
-  </div>
+          {/* ================= CHAT + INPUT ================= */}
+          <div className="flex flex-col flex-1 min-h-0">
+            {/* CHAT SCROLL AREA */}
+            <div className="flex-1 overflow-y-auto overscroll-contain">
+              <MessageContainer />
+            </div>
 
- <div className="shrink-0 pb-safe">
-  <MessageInput />
-</div>
-</div>
-
+            {/* INPUT (STAYS ABOVE KEYBOARD) */}
+            <div className="shrink-0 pb-safe bg-background">
+              <MessageInput />
+            </div>
+          </div>
         </>
       )}
 
