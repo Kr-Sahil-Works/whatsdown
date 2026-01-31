@@ -122,9 +122,20 @@ const RightPanel = () => {
             </div>
           </div>
 
-   {/* ================= CHAT + INPUT ================= */}
-<div className="flex flex-col flex-1 min-h-0 relative">
-  <MessageContainer />
+{/* ================= CHAT + INPUT ================= */}
+<div className="flex flex-col flex-1 min-h-0">
+
+  {/* ✅ HEADER (ONLY ONE, FIXED) */}
+  <div className="shrink-0 sticky top-0 z-50 bg-gray-primary">
+    {/* header content already above — DO NOTHING */}
+  </div>
+
+  {/* ✅ CHAT — ONLY THIS SCROLLS */}
+  <div className="flex-1 min-h-0 overflow-y-auto">
+    <MessageContainer />
+  </div>
+
+  {/* ✅ INPUT — FIXED */}
   <MessageInput />
 </div>
 
