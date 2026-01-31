@@ -98,7 +98,15 @@ const MessageInput = () => {
 
 
 	return (
-		<div className='bg-gray-primary p-2 flex gap-4 items-center'>
+  <div
+    className="
+      fixed bottom-0 left-0 right-0 z-50
+      bg-gray-primary
+      pb-[env(safe-area-inset-bottom)]
+    "
+  >
+    <div className="p-2 flex gap-4 items-center">
+
 			<div className='relative flex gap-2 ml-2'>
 	<div ref={ref}>
 		{isComponentVisible && (
@@ -167,6 +175,7 @@ const MessageInput = () => {
 
 				</div>
 			</form>
+		</div>
 		</div>
 	);
 };

@@ -1,3 +1,5 @@
+"use client";
+
 import ChatBubble from "./chat-bubble";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -6,99 +8,81 @@ import { IMessage } from "@/store/chat-store";
 import { useEffect, useLayoutEffect, useRef } from "react";
 
 const MessageContainer = () => {
-	const { selectedConversation } = useConversationStore();
+  const { selectedConversation } = useConversationStore();
 
-	const messages = useQuery(api.messages.getMessages, {
-		conversation: selectedConversation!._id,
-	});
+  const messages = useQuery(api.messages.getMessages, {
+    conversation: selectedConversation!._id,
+  });
 
-	const me = useQuery(api.users.getMe);
+  const me = useQuery(api.users.getMe);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const didInitialScroll = useRef(false);
 
-	const containerRef = useRef<HTMLDivElement>(null);
-	const didInitialScroll = useRef(false);
+  const scrollToBottom = () => {
+    const el = containerRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  };
 
-	const scrollToBottom = () => {
-		if (!containerRef.current) return;
-		containerRef.current.scrollTop =
-			containerRef.current.scrollHeight;
-	};
+  useLayoutEffect(() => {
+    if (!messages?.length) return;
+    scrollToBottom();
+    didInitialScroll.current = true;
+  }, [messages, selectedConversation?._id]);
 
-	/* 1️⃣ scroll immediately on open */
-	useLayoutEffect(() => {
-		if (!messages?.length) return;
+  useEffect(() => {
+    if (!messages?.length || !didInitialScroll.current) return;
 
-		scrollToBottom();
-		didInitialScroll.current = true;
-	}, [messages, selectedConversation?._id]);
+    const last = messages[messages.length - 1];
+    if (last.messageType !== "image" && last.messageType !== "video") return;
 
-	/* 2️⃣ if LAST message is media, scroll again when it loads */
-	useEffect(() => {
-		if (!messages?.length) return;
-		if (!didInitialScroll.current) return;
+    const media = containerRef.current?.querySelector(
+      "img:last-of-type, video:last-of-type"
+    );
+    if (!media) return;
 
-		const last = messages[messages.length - 1];
+    media.addEventListener("load", scrollToBottom);
+    media.addEventListener("loadedmetadata", scrollToBottom);
 
-		if (last.messageType !== "image" && last.messageType !== "video")
-			return;
+    return () => {
+      media.removeEventListener("load", scrollToBottom);
+      media.removeEventListener("loadedmetadata", scrollToBottom);
+    };
+  }, [messages]);
 
-		const media = containerRef.current?.querySelector(
-			"img:last-of-type, video:last-of-type"
-		);
+  const allImages =
+    messages
+      ?.filter((m: IMessage) => m.messageType === "image")
+      .map((m: IMessage) => m.content) || [];
 
-		if (!media) return;
-
-		const onLoad = () => scrollToBottom();
-
-		media.addEventListener("load", onLoad);
-		media.addEventListener("loadedmetadata", onLoad);
-
-		return () => {
-			media.removeEventListener("load", onLoad);
-			media.removeEventListener("loadedmetadata", onLoad);
-		};
-	}, [messages]);
-
-	/* collect all images */
-	const allImages: string[] =
-		messages
-			?.filter((m: IMessage) => m.messageType === "image")
-			.map((m: IMessage) => m.content) || [];
-
-	return (
- <div
-  ref={containerRef}
-  className="
-  relative flex-1
-  overflow-y-auto overflow-x-hidden
-  overscroll-contain
-  touch-pan-y
-
-  bg-(image:--bg-chat-tile-light)
-  dark:bg-(image:--bg-chat-tile-dark)
-  bg-repeat
-  bg-size-[420px_420px]
-  bg-position-[0_-1px]
-  min-h-[110%]
-"
-
->
-
-    <div className="px-3 md:px-12 pt-6 flex flex-col gap-3">
-      {messages?.map((msg, idx) => (
-        <ChatBubble
-          key={msg._id}
-          me={me}
-          message={msg}
-          previousMessage={idx > 0 ? messages[idx - 1] : undefined}
-          allImages={allImages}
-        />
-      ))}
-
-      <div className="h-[120px] md:h-6" />
+  return (
+    <div
+      ref={containerRef}
+      className="
+        flex-1 overflow-y-auto overscroll-contain touch-pan-y
+        bg-(image:--bg-chat-tile-light)
+        dark:bg-(image:--bg-chat-tile-dark)
+        bg-repeat
+        bg-size-[420px_420px]
+        bg-position-y-[-2px]
+      "
+      style={{
+        paddingBottom: "calc(96px + env(safe-area-inset-bottom))",
+      }}
+    >
+      <div className="px-3 md:px-12 pt-6 flex flex-col gap-3">
+        {messages?.map((msg, idx) => (
+          <ChatBubble
+            key={msg._id}
+            me={me}
+            message={msg}
+            previousMessage={idx > 0 ? messages[idx - 1] : undefined}
+            allImages={allImages}
+          />
+        ))}
+      </div>
     </div>
-  </div>
-);
-
+  );
 };
 
 export default MessageContainer;

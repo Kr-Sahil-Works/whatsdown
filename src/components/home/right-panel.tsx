@@ -122,25 +122,14 @@ const RightPanel = () => {
             </div>
           </div>
 
-          {/* ================= CHAT + INPUT ================= */}
-          <div className="flex flex-col flex-1 min-h-0">
-            {/* CHAT SCROLL AREA */}
-            <div className="flex-1 overflow-y-auto overscroll-contain">
-              <MessageContainer />
-            </div>
-
-            {/* INPUT (STAYS ABOVE KEYBOARD) */}
-           <div
-  className="
-    sticky bottom-0 z-40
-    bg-background
-    pb-safe
-  "
->
+         {/* ================= CHAT + INPUT ================= */}
+<div className="flex flex-col flex-1 min-h-0 relative">
+  <MessageContainer />
   <MessageInput />
 </div>
 
-          </div>
+
+          
         </>
       )}
 
