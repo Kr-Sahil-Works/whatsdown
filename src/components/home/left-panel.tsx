@@ -18,8 +18,6 @@ import {
   SidebarContent,
 } from "@/components/ui/sidebar";
 
-
-
 const LeftPanel = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
 
@@ -35,9 +33,6 @@ const LeftPanel = () => {
     search,
   } = useConversationStore();
 
-  /* =====================
-     CLEANUP SELECTED CHAT
-  ===================== */
   useEffect(() => {
     const ids = conversations?.map((c) => c._id);
     if (selectedConversation && ids && !ids.includes(selectedConversation._id)) {
@@ -47,33 +42,32 @@ const LeftPanel = () => {
 
   if (isLoading) return <LeftSidebarSkeleton />;
 
-  /* =====================
-     SEARCH FILTER (FIXED)
-  ===================== */
   const filteredConversations = conversations?.filter((c) => {
     if (!search) return true;
-
-    const name = c.isGroup
-      ? c.groupName ?? ""
-      : c.name ?? "";
-
+    const name = c.isGroup ? c.groupName ?? "" : c.name ?? "";
     return name.toLowerCase().includes(search.toLowerCase());
   });
 
   return (
     <Sidebar
-      className="border-r bg-background"
-      collapsible="full"
-      collapsed={!isChatListOpen}
-    >
+  collapsible="full"
+  collapsed={!isChatListOpen}
+  className={`
+    border-r bg-background
+    w-full! md:w-auto!
+    ${selectedConversation ? "hidden md:flex" : "flex"}
+  `}
+>
+
+
       {/* HEADER */}
       <SidebarHeader className="sticky top-0 z-20 border-b bg-background">
         <div className="flex items-center justify-between px-3 py-2">
           {isAuthenticated && (
-  <div className="scale-120 origin-left">
-    <UserButton />
-  </div>
-)}
+            <div className="scale-120 origin-left">
+              <UserButton />
+            </div>
+          )}
 
           <div className="flex items-center gap-2">
             <UserListDialog />
@@ -82,7 +76,7 @@ const LeftPanel = () => {
         </div>
 
         {/* SEARCH */}
-        <div className="px-3 pb-3">
+        <div className="px-3 pb-3 w-[90%] mx-auto">
           <SearchInput />
         </div>
       </SidebarHeader>
@@ -91,24 +85,8 @@ const LeftPanel = () => {
       <SidebarContent className="px-2 py-2">
         <div className="flex flex-col gap-1">
           {filteredConversations?.map((conversation) => (
-            <Conversation
-              key={conversation._id}
-              conversation={conversation}
-            />
+            <Conversation key={conversation._id} conversation={conversation} />
           ))}
-
-          {filteredConversations?.length === 0 && search && (
-            <p className="mt-6 text-center text-sm text-muted-foreground">
-              No chats found
-            </p>
-          )}
-
-          {conversations?.length === 0 && !search && (
-            <div className="mt-6 text-center text-sm text-muted-foreground">
-              <p>No conversations yet</p>
-              <p className="mt-1">Even introverts need one chat 🙂</p>
-            </div>
-          )}
         </div>
       </SidebarContent>
     </Sidebar>
