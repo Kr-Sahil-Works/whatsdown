@@ -61,39 +61,38 @@ const MessageInput = () => {
 	const sendTextMsg = useMutation(api.messages.sendTextMessage);
 	
 	const handleSentTextMsg = async (e: React.FormEvent) => {
-	e.preventDefault();
-	if (!msgText.trim() || isSending) return;
+  e.preventDefault();
+  if (!msgText.trim() || isSending) return;
 
-	setIsSending(true);
-	setSentDone(false);
+  setIsSending(true);
+  setSentDone(false);
 
-	try {
-		await sendTextMsg({
-			content: msgText,
-			conversation: selectedConversation!._id,
-			sender: me!._id,
-		});
+  try {
+    await sendTextMsg({
+      content: msgText,
+      conversation: selectedConversation!._id,
+      sender: me!._id,
+    });
 
-		// feels instant
-		setMsgText("");
-		requestAnimationFrame(() => {
-	inputRef.current?.focus();
-});
+    setMsgText("");
 
+    // ✅ keep keyboard open (mobile-safe)
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
 
-		// spinner → check
-		setTimeout(() => {
-			setSentDone(true);
-			setIsSending(false);
-		}, 120);
+    setTimeout(() => {
+      setSentDone(true);
+      setIsSending(false);
+    }, 120);
 
-		// auto reset
-		setTimeout(() => setSentDone(false), 420);
-	} catch (error: any) {
-		setIsSending(false);
-		toast.error(error.message);
-	}
+    setTimeout(() => setSentDone(false), 420);
+  } catch (error: any) {
+    setIsSending(false);
+    toast.error(error.message);
+  }
 };
+
 
 
 
