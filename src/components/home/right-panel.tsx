@@ -54,7 +54,6 @@ const RightPanel = () => {
       {...(selectedConversation ? swipe : {})}
       className={`
         fixed inset-0 w-full h-dvh
-         touch-pan-y   /* ✅ allow vertical scroll */
         md:relative md:inset-auto md:flex-1 md:h-full
         bg-background
         flex flex-col

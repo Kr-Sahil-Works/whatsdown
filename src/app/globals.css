@@ -4,12 +4,10 @@
 html,
 body {
   height: 100%;
-  overflow: hidden;              /* keep body locked */
-  overscroll-behavior-x: none;   /* stop sideways bounce */
-  overscroll-behavior-y: auto;   /* ✅ allow vertical scroll chain */
-  touch-action: pan-y;           /* ✅ allow vertical gestures */
+  overflow: hidden;              /* 🔒 stop body scroll */
+  overscroll-behavior: none;     /* 🔒 stop bounce */
+   touch-action: manipulation;
 }
-
 
 body {
   min-height: 100dvh;
