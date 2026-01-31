@@ -27,29 +27,41 @@ const Conversation = ({ conversation, onAvatarClick }: Props) => {
     <div
       onClick={() => setSelectedConversation(conversation)}
       className={`
-        flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer
-        transition-all duration-150
-        ${
-          isActive
-            ? "bg-gray-tertiary shadow-md"
-            : "bg-card hover:bg-chat-hover hover:shadow-sm"
-        }
+        relative
+        flex items-center gap-4
+        px-4 py-3
+        rounded-2xl
+        cursor-pointer
+        mb-2
+
+        bg-gray-secondary/60 dark:bg-gray-secondary/40
+
+        transition-all duration-200 ease-out
+
+        hover:bg-black/10 dark:hover:bg-white/10
+        hover:shadow-md
+        hover:-translate-y-[1px]
+
+        ${isActive ? "bg-gray-tertiary shadow-md" : ""}
       `}
     >
       {/* AVATAR */}
       <Avatar
-        className="relative shrink-0 cursor-pointer"
+        className="
+          relative shrink-0
+          h-12 w-12            /* ✅ BIGGER SIZE */
+          cursor-pointer      /* ✅ POINTER */
+          transition-transform duration-200
+          hover:scale-105     /* ✅ subtle hover pop */
+        "
         onClick={(e) => {
-          e.stopPropagation(); // 👈 prevents opening the chat
+          e.stopPropagation();
           onAvatarClick?.();
         }}
       >
         {conversation.isOnline && (
           <>
-            {/* Outer glow ring */}
             <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full bg-green-500/30 animate-pulse" />
-
-            {/* Solid dot */}
             <span className="absolute bottom-0.5 right-0.5 h-2.5 w-2.5 rounded-full bg-green-600 border-2 border-background" />
           </>
         )}
@@ -69,6 +81,7 @@ const Conversation = ({ conversation, onAvatarClick }: Props) => {
           <h3 className="text-sm font-medium truncate">
             {conversationName}
           </h3>
+
           <span className="text-xs text-muted-foreground">
             {formatDate(
               lastMessage?._creationTime || conversation._creationTime
@@ -78,7 +91,6 @@ const Conversation = ({ conversation, onAvatarClick }: Props) => {
 
         <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground truncate">
           {lastMessage?.sender === me?._id && <MessageSeenSvg />}
-
           {conversation.isGroup && <Users size={12} />}
 
           {!lastMessage && "Hi, How are you today?"}

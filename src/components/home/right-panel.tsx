@@ -12,7 +12,7 @@ import { useConvexAuth } from "convex/react";
 import { RightChatSkeleton } from "../home/chat-skeleton";
 import ProfilePreviewDialog from "./profile-preview-dialog";
 
-const ANIMATION_MS = 300; // must match Tailwind duration-300
+const ANIMATION_MS = 300;
 
 const RightPanel = () => {
   const [showProfile, setShowProfile] = useState(false);
@@ -20,10 +20,9 @@ const RightPanel = () => {
     useConversationStore();
   const { isLoading } = useConvexAuth();
 
-  // controls delayed unmount
   const [isClosing, setIsClosing] = useState(false);
 
-  // delay unmount until slide-out animation finishes
+  // ⏳ delay unmount until animation finishes
   useEffect(() => {
     if (!isClosing) return;
 
@@ -37,31 +36,34 @@ const RightPanel = () => {
 
   if (isLoading) return <RightChatSkeleton />;
 
-  const isOpen = selectedConversation && !isClosing;
+  // 👇 KEEP PANEL MOUNTED during animation
+  const isVisible = !!selectedConversation || isClosing;
+  
 
   return (
     <div
-            className={`
-        fixed inset-0 w-full h-dvh
+      className={`
+        fixed inset-0 z-40
+        w-full h-dvh
         md:relative md:inset-auto md:flex-1 md:h-full
         bg-background
         flex flex-col
         transition-transform duration-300 ease-out
         md:translate-x-0
-        ${isOpen ? "translate-x-0" : "translate-x-full md:flex"}
+        ${isClosing ? "translate-x-full" : "translate-x-0"}
       `}
     >
-      {/* 🔴 DESKTOP PLACEHOLDER ONLY — NOT MOUNTED ON MOBILE */}
+      {/* DESKTOP PLACEHOLDER */}
       {!selectedConversation && (
         <div className="hidden lg:flex flex-1">
           <ChatPlaceHolder />
         </div>
       )}
 
-      {/* ✅ CHAT VIEW */}
+      {/* CHAT VIEW (ALWAYS MOUNTED) */}
       {selectedConversation && (
         <>
-          {/* ================= HEADER (FIXED) ================= */}
+          {/* HEADER */}
           <div className="sticky top-0 shrink-0 z-50 bg-gray-primary">
             <div className="flex justify-between p-3">
               <div className="flex gap-2 items-center">
@@ -111,14 +113,11 @@ const RightPanel = () => {
             </div>
           </div>
 
-{/* ================= CHAT + INPUT ================= */}
-<div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-  <MessageContainer />
-  <MessageInput />
-</div>
-
-
-
+          {/* CHAT + INPUT */}
+          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <MessageContainer />
+            <MessageInput />
+          </div>
         </>
       )}
 
