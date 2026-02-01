@@ -14,11 +14,13 @@ import ImageAILoader from "@/components/ui/ImageAILoader";
 
 
 type ChatBubbleProps = {
-	message: IMessage;
-	me: any;
-	previousMessage?: IMessage;
-	allImages: string[];
+  message: IMessage;
+  me: any;
+  previousMessage?: IMessage;
+  allImages: string[];
+  onReply?: (msg: IMessage) => void;
 };
+
 
 
 /* ================= IMAGE ================= */
@@ -95,27 +97,31 @@ const ImageMessage = ({
 	};
 
 	/* TOUCH END */
-	const onTouchEnd = (e: React.TouchEvent) => {
-		if (startY.current !== null && startX.current !== null) {
-			const endY = e.changedTouches[0].clientY;
-			const endX = e.changedTouches[0].clientX;
+const onTouchEnd = (e: React.TouchEvent) => {
+  // ✅ reset any swipe transform
+  (e.currentTarget as HTMLElement).style.transform = "translateX(0)";
 
-			/* SWIPE DOWN TO CLOSE */
-			if (endY - startY.current > 120) {
-				setOpen(false);
-			}
+  if (startY.current !== null && startX.current !== null) {
+    const endY = e.changedTouches[0].clientY;
+    const endX = e.changedTouches[0].clientX;
 
-			/* SWIPE LEFT / RIGHT */
-			const diffX = endX - startX.current;
-			if (Math.abs(diffX) > 80) {
-				diffX > 0 ? goPrev() : goNext();
-			}
-		}
+    /* SWIPE DOWN TO CLOSE */
+    if (endY - startY.current > 120) {
+      setOpen(false);
+    }
 
-		startY.current = null;
-		startX.current = null;
-		pinchStart.current = null;
-	};
+    /* SWIPE LEFT / RIGHT */
+    const diffX = endX - startX.current;
+    if (Math.abs(diffX) > 80) {
+      diffX > 0 ? goPrev() : goNext();
+    }
+  }
+
+  startY.current = null;
+  startX.current = null;
+  pinchStart.current = null;
+};
+
 
 	/* DOUBLE TAP */
 	const onDoubleTap = () => {
@@ -336,7 +342,7 @@ const TextMessage = ({ message }: { message: IMessage }) => {
 					{message.content}
 				</a>
 			) : (
-				<p className="text-[14px] leading-[1.35] font-normal whitespace-pre-wrap break-words mb-0.5">
+				<p className="text-[14px] leading-[1.35] font-normal whitespace-pre-wrap wrap-break-word mb-0.5">
 
 
   {message.content}
@@ -354,7 +360,76 @@ const TextMessage = ({ message }: { message: IMessage }) => {
 
 
 
-const ChatBubble = ({ me, message, previousMessage,allImages }: ChatBubbleProps) => {
+const ChatBubble = ({
+  me,
+  message,
+  previousMessage,
+  allImages,
+  onReply, // ✅ ADD THIS
+}: ChatBubbleProps) => {
+
+	const startX = useRef<number | null>(null);
+	const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+
+const startY = useRef<number | null>(null);
+const triggered = useRef(false);
+
+const onTouchStart = (e: React.TouchEvent) => {
+  startX.current = e.touches[0].clientX;
+  startY.current = e.touches[0].clientY;
+  triggered.current = false;
+};
+
+const onTouchMove = (e: React.TouchEvent) => {
+  if (!startX.current || !startY.current || triggered.current) return;
+
+  const dx = e.touches[0].clientX - startX.current;
+  const dy = Math.abs(e.touches[0].clientY - startY.current);
+
+  // ✅ WhatsApp thresholds
+  if (dx > 70 && dy < 30) {
+    triggered.current = true;
+    onReply?.(message);
+  }
+
+  // optional visual feedback
+  if (dx > 0 && dx < 80) {
+    (e.currentTarget as HTMLElement).style.transform = `translateX(${dx}px)`;
+  }
+};
+
+const onTouchEnd = (e: React.TouchEvent) => {
+  (e.currentTarget as HTMLElement).style.transform = "translateX(0)";
+  startX.current = null;
+  startY.current = null;
+  triggered.current = false;
+};
+/* ================= DESKTOP HOLD ================= */
+
+const onMouseDown = (e: React.MouseEvent) => {
+  e.preventDefault(); // ⛔ stop text selection
+  holdTimer.current = setTimeout(() => {
+    onReply?.(message);
+  }, 450);
+};
+
+
+const onMouseUp = () => {
+  if (holdTimer.current) {
+    clearTimeout(holdTimer.current);
+    holdTimer.current = null;
+  }
+};
+
+const onMouseLeave = () => {
+  if (holdTimer.current) {
+    clearTimeout(holdTimer.current);
+    holdTimer.current = null;
+  }
+};
+
+
 	
 	const date = new Date(message._creationTime);
 	let hour = date.getHours();
@@ -440,12 +515,19 @@ if (!fromMe) {
         {/* 💬 TEXT / TEXT LOADER */}
         {message.messageType === "text" &&
  message.content !== "__IMAGE_AI_LOADING__" && (
-          <div
-            className={`flex flex-col z-20 max-w-fit px-3 pt-1.5 pb-1
+         <div
+  onTouchStart={onTouchStart}
+  onTouchMove={onTouchMove}
+  onTouchEnd={onTouchEnd}
+  onMouseDown={onMouseDown}
+  onMouseUp={onMouseUp}
+  onMouseLeave={onMouseLeave}
+  className={`cursor-pointer flex flex-col z-20 max-w-fit px-3 pt-1.5 pb-1
+  rounded-lg shadow-sm relative ${bgClass}
+  transition-transform duration-150`}
+>
 
 
- rounded-lg shadow-sm relative ${bgClass}`}
-          >
             {!fromAI &&
   previousMessage?.sender?._id !== message.sender?._id && (
     <OtherMessageIndicator />
@@ -498,10 +580,19 @@ return (
 				)}
 
 				{message.messageType === "text" && (
-					<div
-						className={`flex z-20 max-w-fit px-3 pt-2 pb-2
- rounded-md shadow-sm ml-auto relative ${bgClass}`}
-					>
+ <div
+  onTouchStart={onTouchStart}
+  onTouchMove={onTouchMove}
+  onTouchEnd={onTouchEnd}
+  onMouseDown={onMouseDown}
+  onMouseUp={onMouseUp}
+  onMouseLeave={onMouseLeave}
+  className={`cursor-pointer select-none flex z-20 max-w-fit px-3 pt-2 pb-1
+  rounded-md shadow-sm ml-auto relative ${bgClass}
+  transition-transform duration-150`}
+>
+
+
 						{previousMessage?.sender?._id !== message.sender?._id && (
   <SelfMessageIndicator />
 )}
