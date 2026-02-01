@@ -6,7 +6,7 @@ body {
   height: 100%;
   overflow: hidden;              /* 🔒 stop body scroll */
   overscroll-behavior: none;     /* 🔒 stop bounce */
-   touch-action: manipulation;
+   /* touch-action: manipulation; */
 }
 
 body {
