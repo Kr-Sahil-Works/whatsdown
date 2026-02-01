@@ -49,7 +49,7 @@ export default function LeftPanel({ onPreview }: Props) {
 
   return (
     <>
-      {/* ================= MOBILE + TABLET (<1024px) ================= */}
+      {/* ================= MOBILE ================= */}
       <div
         className={`
           flex flex-col w-full h-full
@@ -58,22 +58,46 @@ export default function LeftPanel({ onPreview }: Props) {
           bg-container
         `}
       >
-        <div className="sticky top-0 z-20 border-b bg-gray-primary">
-          <div className="flex justify-between px-3 py-2 mt-0.5">
-            {isAuthenticated && (
-              <div className="scale-135 pt-1 origin-left ml-2">
-                <UserButton />
-              </div>
-            )}
+        {/* HEADER */}
+        <div className="sticky top-0 z-20 bg-gray-primary/95 backdrop-blur shadow-sm">
+          <div className="flex justify-between items-center px-3 py-2.5">
+            {/* LOGO */}
+            <div className="ml-2">
+              <span
+                className="
+                  text-[1.125rem]   /* 18px */
+                  font-semibold
+                  leading-none
+                  tracking-tight
+                  text-[#25D366]
+                  cursor-pointer
+                "
+              >
+                WhatsPlus
+              </span>
+            </div>
 
-            <div className="flex items-center gap-2">
-              <div className="lg:hidden">
+            {/* ACTIONS */}
+            <div className="flex items-center gap-1">
+              <div className="header-action h-11 w-11 flex items-center justify-center">
                 <UserListDialog />
               </div>
 
-              <div className="mr-3 pt-1.5 scale-[0.99]">
+              <div className="header-action h-11 w-11 flex items-center justify-center">
                 <ThemeSwitch />
               </div>
+
+              {isAuthenticated && (
+                <div className="header-action h-11 w-11 flex items-center justify-center mr-3">
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        avatarBox: "h-8 w-8",
+                      },
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -82,16 +106,11 @@ export default function LeftPanel({ onPreview }: Props) {
           </div>
         </div>
 
-        {/* ✅ CONVERSATIONS + SEPARATORS */}
+        {/* LIST */}
         <div className="flex-1 overflow-y-auto px-2 pt-3">
           {filtered?.map((c, index) => (
             <div key={c._id}>
-              <Conversation
-                conversation={c}
-                onAvatarClick={() => onPreview(c)}
-              />
-
-              {/* WhatsApp-style separator */}
+              <Conversation conversation={c} onAvatarClick={() => onPreview(c)} />
               {index !== filtered.length - 1 && (
                 <div className="mx-3 h-px bg-border/60 dark:bg-border/40" />
               )}
@@ -100,28 +119,47 @@ export default function LeftPanel({ onPreview }: Props) {
         </div>
       </div>
 
-      {/* ================= DESKTOP (≥1024px) ================= */}
-      <Sidebar
-        className="
-          hidden lg:flex
-          w-95 shrink-0
-          border-r
-          bg-container
-        "
-      >
-        <SidebarHeader className="border-b bg-gray-primary">
-          <div className="flex justify-between px-3 py-2">
-            {isAuthenticated && (
-              <div className="scale-135 pt-1 origin-left ml-2">
-                <UserButton />
-              </div>
-            )}
+      {/* ================= DESKTOP ================= */}
+      <Sidebar className="hidden lg:flex w-95 shrink-0 border-r bg-container">
+        <SidebarHeader className="bg-gray-primary/95 backdrop-blur shadow-sm">
+          <div className="flex justify-between items-center px-3 py-2.5">
+            {/* LOGO */}
+            <div className="ml-2">
+              <span
+                className="
+                  text-[1.125rem]
+                  font-semibold
+                  leading-none
+                  tracking-tight
+                  text-[#25D366]
+                  cursor-pointer
+                "
+              >
+                WhatsPlus
+              </span>
+            </div>
 
-            <div className="flex gap-2">
-              <UserListDialog />
-              <div className="mr-2 pt-1.5 scale-[0.99]">
+            {/* ACTIONS */}
+            <div className="flex items-center gap-1">
+              <div className="header-action h-11 w-11 flex items-center justify-center">
+                <UserListDialog />
+              </div>
+
+              <div className="header-action h-11 w-11 flex items-center justify-center">
                 <ThemeSwitch />
               </div>
+
+              {isAuthenticated && (
+                <div className="header-action h-11 w-11 flex items-center justify-center">
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        avatarBox: "h-8 w-8",
+                      },
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -130,16 +168,10 @@ export default function LeftPanel({ onPreview }: Props) {
           </div>
         </SidebarHeader>
 
-        {/* ✅ CONVERSATIONS + SEPARATORS */}
         <SidebarContent className="px-2 pt-3 pb-2">
           {filtered?.map((c, index) => (
             <div key={c._id}>
-              <Conversation
-                conversation={c}
-                onAvatarClick={() => onPreview(c)}
-              />
-
-              {/* WhatsApp-style separator */}
+              <Conversation conversation={c} onAvatarClick={() => onPreview(c)} />
               {index !== filtered.length - 1 && (
                 <div className="mx-3 h-px bg-border/60 dark:bg-border/40" />
               )}

@@ -264,21 +264,61 @@ const MessageTime = ({
 }) => {
 	return (
 		<p
-			className="text-[10px] mt-2 self-end flex gap-1 items-center"
-			suppressHydrationWarning
-		>
+  className="
+    text-[10px]
+    leading-none
+    mt-3.5
+	-mr-1
+	opacity-80
+    self-end
+    flex
+    items-center
+    gap-1
+    text-gray-500
+    dark:text-gray-400
+  "
+>
+
 			{time} {fromMe && <MessageSeenSvg />}
 		</p>
 	);
 };
 
 const OtherMessageIndicator = () => (
-	<div className="absolute bg-white dark:bg-gray-primary top-0 -left-1 w-3 h-3 rounded-bl-full" />
+  <div
+    className="
+      absolute
+      top-0
+      left-0
+      w-3
+      h-3
+      bg-white dark:bg-gray-primary
+      rounded-bl-full
+      -translate-x-1
+    "
+  />
 );
 
+
+
+
 const SelfMessageIndicator = () => (
-	<div className="absolute bg-green-chat top-0 -right-0.75 w-3 h-3 rounded-br-full overflow-hidden" />
+  <div
+    className="
+      absolute
+      top-0
+      right-0
+      w-3
+      h-3
+      bg-green-chat
+      rounded-br-full
+      translate-x-1
+    "
+  />
 );
+
+
+
 
 /* ================= TEXT ================= */
 const TextMessage = ({ message }: { message: IMessage }) => {
@@ -291,12 +331,18 @@ const TextMessage = ({ message }: { message: IMessage }) => {
 					href={message.content}
 					target="_blank"
 					rel="noopener noreferrer"
-					className="mr-2 text-sm font-light text-blue-400 underline"
+					className="mr-2 text-[14px] leading-[1.35] font-normal text-blue-500 underline"
 				>
 					{message.content}
 				</a>
 			) : (
-				<p className="mr-2 text-sm font-light">{message.content}</p>
+				<p className="text-[14px] leading-[1.35] font-normal whitespace-pre-wrap break-words mb-0.5">
+
+
+  {message.content}
+</p>
+
+
 			)}
 		</div>
 	);
@@ -395,9 +441,15 @@ if (!fromMe) {
         {message.messageType === "text" &&
  message.content !== "__IMAGE_AI_LOADING__" && (
           <div
-            className={`flex flex-col z-20 max-w-fit px-2 pt-1 rounded-md shadow-md relative ${bgClass}`}
+            className={`flex flex-col z-20 max-w-fit px-3 pt-1.5 pb-1
+
+
+ rounded-lg shadow-sm relative ${bgClass}`}
           >
-            {!fromAI && <OtherMessageIndicator />}
+            {!fromAI &&
+  previousMessage?.sender?._id !== message.sender?._id && (
+    <OtherMessageIndicator />
+)}
             {fromAI && (
               <Bot size={16} className="absolute bottom-0.5 left-2" />
             )}
@@ -447,9 +499,12 @@ return (
 
 				{message.messageType === "text" && (
 					<div
-						className={`flex z-20 max-w-fit px-2 pt-1 rounded-md shadow-md ml-auto relative ${bgClass}`}
+						className={`flex z-20 max-w-fit px-3 pt-2 pb-2
+ rounded-md shadow-sm ml-auto relative ${bgClass}`}
 					>
-						<SelfMessageIndicator />
+						{previousMessage?.sender?._id !== message.sender?._id && (
+  <SelfMessageIndicator />
+)}
 						<TextMessage message={message} />
 
 

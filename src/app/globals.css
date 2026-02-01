@@ -117,44 +117,36 @@ body {
 :root {
   --radius: 0.5rem;
 
-  --background: 48 8% 88%;
+  /* 🌤 WhatsApp-style warm background */
+  --background: 45 20% 96%;
   --foreground: 222.2 84% 4.9%;
 
-  --container: 0 0% 100%;
-  --left-panel: 100 100% 100%;
+  /* Panels / cards */
+  --container: 45 30% 98%;
+  --left-panel: 45 35% 97%;
 
-  --gray-primary: 216 20% 95%;
-  --gray-secondary: 216 20% 95%;
+  /* Soft warm grays */
+  --gray-primary: 45 25% 94%;
+  --gray-secondary: 45 20% 92%;
 
-  --chat-hover: 180 5% 96%;
+  /* Hover */
+  --chat-hover: 45 25% 93%;
 
+  /* WhatsApp green */
   --green-primary: 167 100% 33%;
   --green-chat: 111 91% 91%;
 
-  --card: 0 0% 100%;
+  --card: 45 30% 98%;
   --card-foreground: 222.2 84% 4.9%;
 
-  --popover: 0 0% 100%;
+  --popover: 45 30% 98%;
   --popover-foreground: 222.2 84% 4.9%;
 
-  --primary: 222.2 47.4% 11.2%;
-  --primary-foreground: 210 40% 98%;
-
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-
-  --destructive: 0 84.2% 60.2%;
-
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
+  --border: 45 20% 90%;
+  --input: 45 20% 92%;
+  --ring: 167 100% 33%;
 }
+
 
 /* ================= DARK MODE ================= */
 .dark {
@@ -292,4 +284,21 @@ body {
     opacity: 0;
   }
 }
+
+@keyframes logoIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-logo-in {
+  animation: logoIn 0.45s ease-out forwards;
+}
+
+
 

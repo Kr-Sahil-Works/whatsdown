@@ -2,49 +2,57 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import "./theme-switch.css";
+import styles from "./theme-switch.module.css";
 
-export default function ThemeSwitch() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+const ThemeSwitch = () => {
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
-  const isDark = (resolvedTheme ?? theme) === "dark";
+  const isDark = resolvedTheme === "dark";
 
   return (
-    <label className="theme-switch">
+    <label className={styles.switch} aria-label="Toggle theme">
       <input
         type="checkbox"
-        className="theme-switch__checkbox"
         checked={isDark}
         onChange={() => setTheme(isDark ? "light" : "dark")}
       />
-      <div className="theme-switch__container">
-        <div className="theme-switch__clouds"></div>
 
-        <div className="theme-switch__stars-container">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none">
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M135.831 3.00688C135.055 3.85027 134.111 4.29946 133 4.35447C134.111 4.40947 135.055 4.85867 135.831 5.71123C136.607 6.55462 136.996 7.56303 136.996 8.72727C136.996 7.95722 137.172 7.25134 137.525 6.59129C137.886 5.93124 138.372 5.39954 138.98 5.00535C139.598 4.60199 140.268 4.39114 141 4.35447C139.88 4.2903 138.936 3.85027 138.16 3.00688C137.384 2.16348 136.996 1.16425 136.996 0C136.996 1.16425 136.607 2.16348 135.831 3.00688Z"
-              fill="currentColor"
-            />
-          </svg>
+      <div className={`${styles.slider} ${styles.round}`}>
+        {/* SUN / MOON */}
+        <div className={styles.sunMoon}>
+          {/* moon dots */}
+          <span className={`${styles.moonDot} ${styles.moonDot1}`} />
+          <span className={`${styles.moonDot} ${styles.moonDot2}`} />
+          <span className={`${styles.moonDot} ${styles.moonDot3}`} />
+
+          {/* light rays */}
+          <span className={`${styles.lightRay} ${styles.lightRay1}`} />
+          <span className={`${styles.lightRay} ${styles.lightRay2}`} />
+          <span className={`${styles.lightRay} ${styles.lightRay3}`} />
+
+          {/* clouds */}
+          <span className={`${styles.cloudDark} ${styles.cloud1}`} />
+          <span className={`${styles.cloudDark} ${styles.cloud2}`} />
+          <span className={`${styles.cloudDark} ${styles.cloud3}`} />
+          <span className={`${styles.cloudLight} ${styles.cloud4}`} />
+          <span className={`${styles.cloudLight} ${styles.cloud5}`} />
+          <span className={`${styles.cloudLight} ${styles.cloud6}`} />
         </div>
 
-        <div className="theme-switch__circle-container">
-          <div className="theme-switch__sun-moon-container">
-            <div className="theme-switch__moon">
-              <div className="theme-switch__spot" />
-              <div className="theme-switch__spot" />
-              <div className="theme-switch__spot" />
-            </div>
-          </div>
+        {/* STARS */}
+        <div className={styles.stars}>
+          <span className={`${styles.star} ${styles.star1}`} />
+          <span className={`${styles.star} ${styles.star2}`} />
+          <span className={`${styles.star} ${styles.star3}`} />
+          <span className={`${styles.star} ${styles.star4}`} />
         </div>
       </div>
     </label>
   );
-}
+};
+
+export default ThemeSwitch;

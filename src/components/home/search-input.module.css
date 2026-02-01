@@ -1,64 +1,170 @@
+/* ===== Container ===== */
 .inputContainer {
   display: flex;
-  background: linear-gradient(173deg, #f5f7fa 0%, #e4e7ec 100%);
-  border-radius: 0.6rem;
+  align-items: center;
+  position: relative;
+ border: 2px solid transparent;
+
+  width: 90%;
+  margin: 0 auto;
+  padding: 0.2rem;
+
+  border-radius: 999px;
+
+  background: linear-gradient(120deg, #f5f7fa, #e4e7ec, #f5f7fa);
+  background-size: 200% 200%;
+
   box-shadow:
     3px 3px 8px #c9ced6,
     -3px -3px 12px #ffffff;
-  padding: 0.18rem;
+
+  transition:
+    width 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-.input {
-  border-radius: 0.45rem;
-  background: #f5f7fa;
-  box-shadow:
-    inset 1.5px 1.5px 4px #c9ced6,
-    inset -1.5px -1.5px 4px #ffffff;
+/* Expand on focus */
+.inputContainer:focus-within {
   width: 100%;
-  padding: 0.4rem 0.7rem;
-  font-size: 0.75rem;
-  line-height: 1;
-  border: 1px solid transparent;
+  animation: none;
+
+  box-shadow: none;
+  border: 2px solid #22c55e;
+  background: #ffffff;
+}
+
+
+/* ===== Search Icon ===== */
+.searchIcon {
+  margin-left: 10px;
+  margin-right: 4px;
+  color: #6b7280;
+  flex-shrink: 0;
+
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+/* Fade icon slightly when typing */
+.hasValue .searchIcon {
+  opacity: 0.4;
+}
+
+/* ===== Input ===== */
+.input {
+  flex: 1;
+  min-width: 0;
+
+  background: transparent;
+  border: none;
+  outline: none;
+
+  padding: 0.45rem 2.6rem 0.45rem 0.4rem;
+  font-size: 0.78rem;
   color: #111827;
+
+  transition: color 0.2s ease;
 }
 
 .input::placeholder {
   color: #6b7280;
+  transition: opacity 0.2s ease;
 }
 
-.input:focus {
-  border: 1px solid #22c55e;
-  outline: none;
-  box-shadow:
-    inset 0 0 4px rgba(34,197,94,.25),
-    0 0 6px rgba(34,197,94,.2);
+.input:focus::placeholder {
+  opacity: 0.5;
 }
 
+/* ===== WhatsApp-style close button ===== */
+.clearBtn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%) scale(0.95);
 
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
 
+  border: none;
+  background: #ffffff;
+  color: #6b7280;
 
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition:
+    opacity 0.15s ease,
+    transform 0.2s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Show when text exists */
+.hasValue .clearBtn {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  pointer-events: auto;
+}
+
+/* Subtle hover */
+.clearBtn:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Dark Mode ===== */
 :global(.dark) .inputContainer {
-  background: linear-gradient(173deg, #23272f 0%, #14161a 100%);
+  background: linear-gradient(120deg, #23272f, #14161a, #23272f);
+
   box-shadow:
     3px 3px 8px #0e1013,
     -3px -3px 12px #383e4b;
 }
 
 :global(.dark) .input {
-  background: #23272f;
-  box-shadow:
-    inset 1.5px 1.5px 4px #0e1013,
-    inset -1.5px -1.5px 4px #383e4b;
-  color: white;
+  color: #ffffff;
 }
 
 :global(.dark) .input::placeholder {
   color: #9ca3af;
 }
 
-:global(.dark) .input:focus {
-  border: 1px solid #22c55e;
-  box-shadow:
-    inset 0 0 4px rgba(34,197,94,.35),
-    0 0 6px rgba(34,197,94,.25);
+:global(.dark) .searchIcon {
+  color: #9ca3af;
+}
+
+:global(.dark) .clearBtn {
+  background: #1f2937;
+  color: #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+:global(.dark) .clearBtn:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+/* ===== Gradient Animation ===== */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+:global(.dark) .inputContainer:focus-within {
+  background: #111827;
+  border-color: #22c55e;
 }

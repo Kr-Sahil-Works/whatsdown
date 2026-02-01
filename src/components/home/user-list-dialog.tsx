@@ -113,10 +113,59 @@ const UserListDialog = () => {
 	return (
 		<Dialog open={isUserListOpen} onOpenChange={setUserListOpen}>
   <DialogTrigger asChild>
-    <Button size="icon" variant="ghost" className="lg:hidden">
-      <Users className="h-5 w-5" />
-    </Button>
-  </DialogTrigger>
+  <button
+    aria-label="New chat"
+    className="
+      lg:hidden
+      relative
+      w-10 h-10
+      rounded-full
+      flex items-center justify-center
+
+      text-foreground
+
+      transition-all duration-200 ease-out
+
+      hover:bg-foreground/5
+      hover:scale-[1.06]
+
+      active:scale-95
+
+      focus:outline-none
+      focus-visible:ring-2
+      focus-visible:ring-foreground/20
+
+      group
+    "
+  >
+    {/* WhatsApp-style slide layer */}
+    <span
+      className="
+        absolute inset-0
+        rounded-full
+        bg-foreground/8
+        opacity-0
+        translate-y-1
+        group-hover:opacity-100
+        group-hover:translate-y-0
+        transition-all duration-200 ease-out
+      "
+    />
+
+    {/* Compose / New chat icon */}
+    <MessageSquareDiff
+      className="
+        w-5 h-5
+        relative z-10
+
+        transition-transform duration-200 ease-out
+        group-hover:translate-y-[-1px]
+        group-active:scale-90
+      "
+    />
+  </button>
+</DialogTrigger>
+
 			<DialogContent
   className="
     bg-background/50
